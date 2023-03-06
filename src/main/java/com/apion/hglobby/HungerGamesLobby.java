@@ -1,38 +1,34 @@
 package com.apion.hglobby;
 
+import com.apion.hglobby.bungee.BungeeMessageHandler;
+import com.apion.hglobby.bungee.BungeeMessageListener;
 import com.apion.hglobby.matchmake.QueueManager;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.plugin.messaging.PluginMessageListener;
 
-public class HungerGamesLobby extends JavaPlugin implements PluginMessageListener {
-    public static final String BUNGEE_CHANNEL_NAME = "BungeeCord";
+public class HungerGamesLobby extends JavaPlugin {
+    private static HungerGamesLobby instance;
     public static QueueManager queueManager;
-    public static BungeeMessageHandler bungeeMessageHandler;
+    public static BungeeMessageListener bungeeMessageListener;
+
     @Override
     public void onEnable() {
         super.onEnable();
+        instance = this;
         queueManager = new QueueManager();
-        bungeeMessageHandler = new BungeeMessageHandler(queueManager);
-        this.getServer().getMessenger().registerOutgoingPluginChannel(this, BUNGEE_CHANNEL_NAME);
-        this.getServer().getMessenger().registerIncomingPluginChannel(this, BUNGEE_CHANNEL_NAME, this);
+        bungeeMessageListener = new BungeeMessageListener();
+        bungeeMessageListener.init();
     }
 
     @Override
     public void onDisable() {
         super.onDisable();
-        this.getServer().getMessenger().unregisterOutgoingPluginChannel(this);
-        this.getServer().getMessenger().unregisterIncomingPluginChannel(this);
+        bungeeMessageListener.deInit();
     }
 
-    @Override
-    public void onPluginMessageReceived(String channel, Player player, byte[] message) {
-        if (channel.equals(BUNGEE_CHANNEL_NAME)) {
-            ByteArrayDataInput messageWrapper = ByteStreams.newDataInput(message);
-            bungeeMessageHandler.handleMessage(messageWrapper);
-        }
+    public static HungerGamesLobby getInstance() {
+        return instance;
     }
 }
