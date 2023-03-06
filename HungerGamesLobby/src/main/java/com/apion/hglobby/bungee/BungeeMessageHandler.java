@@ -13,9 +13,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginLogger;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Logger;
 
 public class BungeeMessageHandler {
-  private static final PluginLogger logger = (PluginLogger) Bukkit.getLogger();
+  private static final Logger logger = Bukkit.getLogger();
 
   private static final Queue<Pair<String, CompletableFuture<Object>>> futures = new LinkedList<>();
 

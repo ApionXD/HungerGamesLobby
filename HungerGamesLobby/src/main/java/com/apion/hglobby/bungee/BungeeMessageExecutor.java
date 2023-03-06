@@ -2,6 +2,7 @@ package com.apion.hglobby.bungee;
 
 import com.apion.hglobby.HungerGamesLobby;
 import com.apion.hglobby.enums.BungeeMessageTypes;
+import com.apion.hglobby.enums.ChannelNames;
 import com.google.common.collect.Iterables;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
@@ -24,7 +25,7 @@ public class BungeeMessageExecutor {
     Player player = Iterables.getFirst(Bukkit.getOnlinePlayers(), null);
     ByteArrayDataOutput playerCountMessage = ByteStreams.newDataOutput();
     playerCountMessage.writeUTF(BungeeMessageTypes.GET_SERVERS.messageType);
-    player.sendPluginMessage(instance, BungeeMessageListener.BUNGEE_CHANNEL_NAME, playerCountMessage.toByteArray());
+    player.sendPluginMessage(instance, ChannelNames.BUNGEE.channelName, playerCountMessage.toByteArray());
     return future;
   }
 
@@ -42,7 +43,7 @@ public class BungeeMessageExecutor {
     ByteArrayDataOutput playerCountMessage = ByteStreams.newDataOutput();
     playerCountMessage.writeUTF(BungeeMessageTypes.PLAYER_COUNT.messageType);
     playerCountMessage.writeUTF(server);
-    player.sendPluginMessage(instance, BungeeMessageListener.BUNGEE_CHANNEL_NAME, playerCountMessage.toByteArray());
+    player.sendPluginMessage(instance, ChannelNames.BUNGEE.channelName, playerCountMessage.toByteArray());
     return future;
   }
 }

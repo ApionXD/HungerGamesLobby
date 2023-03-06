@@ -8,4 +8,4 @@
  */
 
 rootProject.name = 'HungeeGames'
-include 'HungerGamesLobby'
+include 'HungerGamesLobby', 'HungerGamesServer'

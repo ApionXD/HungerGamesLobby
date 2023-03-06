@@ -3,6 +3,7 @@ package com.apion.hglobby.matchmake;
 import com.apion.hglobby.HungerGamesLobby;
 import com.apion.hglobby.bungee.BungeeMessageExecutor;
 import com.apion.hglobby.bungee.BungeeMessageListener;
+import com.apion.hglobby.server.HungeeServerExecutor;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteArrayDataOutput;
@@ -49,8 +50,11 @@ public class QueueManager {
                 for (final String server : serverList) {
                     BungeeMessageExecutor.getPlayerCountForServer(server).whenComplete(
                         (count, throwable1) -> {
+                            logger.warning("Got all info");
                             final Pair<String, Integer> serverNameCountPair = (Pair<String, Integer>) count;
                             playerCountMap.put(server, serverNameCountPair.getRight());
+                            HungeeServerExecutor serverMessager = HungerGamesLobby.hungeeServerExecutor;
+                            serverMessager.sendInitArenaMessage(serverNameCountPair.getLeft());
                         }
                     );
                 }
