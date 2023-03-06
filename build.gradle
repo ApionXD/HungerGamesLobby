@@ -12,6 +12,7 @@ plugins {
 }
 
 repositories {
+    mavenCentral()
     maven {
         url = uri("https://maven.pkg.github.com/ApionXD/HungerGames/")
     }
@@ -23,4 +24,5 @@ repositories {
 dependencies {
     api('tk.shanebee.hg:hungergames:5.2.2')
     api('org.spigotmc:spigot-api:1.19.3-R0.1-SNAPSHOT')
+    implementation('com.google.guava:guava:latest')
 }
