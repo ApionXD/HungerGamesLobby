@@ -1,0 +1,6 @@
+main: com.apion.hglobby.HungerGamesLobby
+name: HungerGamesLobby
+version: 1.0.0
+commands:
+  queue:
+    description: Enters you into a new hunger games lobby queue
