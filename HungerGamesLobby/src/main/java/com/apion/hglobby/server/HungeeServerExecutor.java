@@ -21,11 +21,9 @@ public class HungeeServerExecutor {
         byte[] messageContents = messageText.getBytes(StandardCharsets.UTF_8);
         message.writeInt(messageContents.length);
         message.write(messageContents);
-        Optional<? extends Player> playerOpt = Bukkit.getOnlinePlayers().stream().findFirst();
-        if (playerOpt.isPresent()) {
-            Player player = playerOpt.get();
-            player.sendPluginMessage(HungerGamesLobby.getInstance(), "BungeeCord", message.toByteArray());
-        }
+        Player player = Bukkit.getOnlinePlayers().stream().findFirst()
+                .orElseThrow(() -> new IllegalStateException("No player online to forward"));
+        player.sendPluginMessage(HungerGamesLobby.getInstance(), "BungeeCord", message.toByteArray());
     }
 
     public void sendInitArenaMessage(String serverName) {
