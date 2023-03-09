@@ -27,6 +27,7 @@ public class HungeeServerExecutor {
             player.sendPluginMessage(HungerGamesLobby.getInstance(), "BungeeCord", message.toByteArray());
         }
     }
+
     public void sendInitArenaMessage(String serverName) {
         writeStringMessage(serverName, "InitArena");
     }

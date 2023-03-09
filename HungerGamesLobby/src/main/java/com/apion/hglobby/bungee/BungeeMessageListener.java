@@ -9,26 +9,26 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.jetbrains.annotations.NotNull;
 
 public class BungeeMessageListener implements PluginMessageListener {
-  private final BungeeMessageHandler handler = new BungeeMessageHandler();
+    private final BungeeMessageHandler handler = new BungeeMessageHandler();
 
-  public void init() {
-    final HungerGamesLobby instance = HungerGamesLobby.getInstance();
-    instance.getServer().getMessenger().registerOutgoingPluginChannel(instance, ChannelNames.BUNGEE.channelName);
-    instance.getServer().getMessenger().registerIncomingPluginChannel(instance, ChannelNames.BUNGEE.channelName, this);
-  }
-
-  public void deInit() {
-    final HungerGamesLobby instance = HungerGamesLobby.getInstance();
-    instance.getServer().getMessenger().unregisterOutgoingPluginChannel(instance);
-    instance.getServer().getMessenger().unregisterIncomingPluginChannel(instance);
-  }
-
-  @Override
-  public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, @NotNull byte[] message) {
-    if (!channel.equals("BungeeCord")) {
-      return;
+    public void init() {
+        final HungerGamesLobby instance = HungerGamesLobby.getInstance();
+        instance.getServer().getMessenger().registerOutgoingPluginChannel(instance, ChannelNames.BUNGEE.channelName);
+        instance.getServer().getMessenger().registerIncomingPluginChannel(instance, ChannelNames.BUNGEE.channelName, this);
     }
-    ByteArrayDataInput in = ByteStreams.newDataInput(message);
-    handler.handleMessage(in);
-  }
+
+    public void deInit() {
+        final HungerGamesLobby instance = HungerGamesLobby.getInstance();
+        instance.getServer().getMessenger().unregisterOutgoingPluginChannel(instance);
+        instance.getServer().getMessenger().unregisterIncomingPluginChannel(instance);
+    }
+
+    @Override
+    public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, @NotNull byte[] message) {
+        if (!channel.equals("BungeeCord")) {
+            return;
+        }
+        ByteArrayDataInput in = ByteStreams.newDataInput(message);
+        handler.handleMessage(in);
+    }
 }
