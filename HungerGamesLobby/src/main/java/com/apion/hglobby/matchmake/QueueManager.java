@@ -30,10 +30,11 @@ public class QueueManager {
             "queuebar"
     );
     final BossBar queueBossBar;
-    final List<ArenaTimerRunnable> queuesInProgress = new ArrayList<>();
+    final List<ArenaTimerRunnable> queuesInProgress;
 
     public QueueManager() {
         playerList = new LinkedList<>();
+        queuesInProgress = new ArrayList<>();
         queueBossBar = Bukkit.createBossBar(
                 queueNamespacedKey,
                 BOSS_BAR_TITLE,
@@ -73,9 +74,7 @@ public class QueueManager {
                         HungerGamesLobby.getInstance().getIntFromConfirm("queue.maxPlayers")
                 );
                 runnable.runTask(HungerGamesLobby.getInstance());
-                queuesInProgress.add(
-                        runnable
-                );
+                queuesInProgress.add(runnable);
                 playerList.clear();
             }
             else {

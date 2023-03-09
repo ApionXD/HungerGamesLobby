@@ -11,7 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.text.MessageFormat;
-import java.util.Objects;
 import java.util.Queue;
 import java.util.UUID;
 import java.util.logging.Logger;
