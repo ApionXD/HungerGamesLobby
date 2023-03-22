@@ -21,6 +21,7 @@ public class CreateArenaRunnable extends BukkitRunnable {
     public CreateArenaRunnable(final Queue<UUID> players, final NamespacedKey bossBarKey) {
         this.players = players;
         this.bossBarKey = bossBarKey;
+        playerCountMap = new HashMap<String, Integer>();
     }
 
     // 1. Get names of all servers

@@ -7,9 +7,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class QueueCommand implements CommandExecutor {
     private static final String COMMAND_NAME = "queue";
     private static final String COMMAND_DESCRIPTION = "Enters you into a queue for Hunger Games";
