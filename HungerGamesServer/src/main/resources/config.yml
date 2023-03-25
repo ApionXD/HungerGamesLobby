@@ -1,0 +1,8 @@
+bungee:
+  serverName: serverName
+database:
+  host: host
+  name: name
+  port: port
+  username: username
+  password: password
