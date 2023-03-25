@@ -23,14 +23,7 @@ public class HungerGamesServer extends JavaPlugin {
     private static HG hgPlugin;
     @Getter
     private static MultiverseCore mvPlugin;
-
     private static LobbyMessageHandler lobbyMessageHandler;
-
-    @Override
-    public void onLoad() {
-        Database.initConnection();
-        super.onLoad();
-    }
 
     @Override
     public void onEnable() {
@@ -38,6 +31,7 @@ public class HungerGamesServer extends JavaPlugin {
         super.onEnable();
         hgPlugin = (HG) Bukkit.getPluginManager().getPlugin("HungerGames");
         mvPlugin = (MultiverseCore) Bukkit.getPluginManager().getPlugin("Multiverse-Core");
+        Database.initConnection();
         lobbyMessageHandler = new LobbyMessageHandler();
         lobbyMessageHandler.init();
     }
