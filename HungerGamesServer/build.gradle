@@ -18,6 +18,7 @@ java {
 }
 
 repositories {
+    mavenLocal()
     jcenter()
     mavenCentral()
     maven {
@@ -30,6 +31,12 @@ repositories {
     maven {
         url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
     }
+    maven {
+        url = "https://repo.onarandombox.com/content/groups/public/"
+    }
+    maven {
+        url = uri('https://repo.minebench.de/')
+    }
 }
 
 test {
@@ -41,6 +48,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.26'
     api('tk.shanebee.hg:hungergames:5.2.2')
     api('org.spigotmc:spigot-api:1.19.3-R0.1-SNAPSHOT')
+    compileOnly('com.onarandombox.multiversecore:multiverse-core:4.3.2')
     implementation('com.google.guava:guava:latest')
     implementation('org.jetbrains:annotations:16.0.2')
 

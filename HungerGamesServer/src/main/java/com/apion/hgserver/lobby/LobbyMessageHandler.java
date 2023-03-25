@@ -1,6 +1,7 @@
 package com.apion.hgserver.lobby;
 
 import com.apion.hgserver.HungerGamesServer;
+import com.apion.hgserver.arena.ArenaInitializer;
 import com.apion.hgserver.enums.ChannelNames;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
@@ -15,11 +16,13 @@ import java.util.logging.Logger;
 @NoArgsConstructor
 public class LobbyMessageHandler implements PluginMessageListener {
     private static Logger logger = Bukkit.getLogger();
+    private ArenaInitializer arenaInitializer;
 
 
     public void init() {
         final HungerGamesServer instance = HungerGamesServer.getInstance();
         instance.getServer().getMessenger().registerIncomingPluginChannel(instance, ChannelNames.BUNGEE.channelName, this);
+        arenaInitializer = new ArenaInitializer();
     }
 
     @Override
@@ -37,6 +40,7 @@ public class LobbyMessageHandler implements PluginMessageListener {
                 switch (command) {
                     case "InitArena" -> {
                         logger.warning("Got message to init arena");
+                        arenaInitializer.initializeArena();
                     }
                     default -> {
                         logger.severe("Got command from hub " + command + " but no actions defined");
