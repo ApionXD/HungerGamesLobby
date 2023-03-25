@@ -59,11 +59,8 @@ public class ArenaTimerRunnable extends BukkitRunnable {
             }
         }.runTaskTimer(HungerGamesLobby.getInstance(), 0, 20);
 
-        // Run arena after delay
-        new CreateArenaRunnable(players, bossBarKey).runTaskLater(
-                HungerGamesLobby.getInstance(),
-                delay
-        );
+        // Create arena
+        new CreateArenaRunnable(players, bossBarKey, delay).runTask(HungerGamesLobby.getInstance());
     }
 
     public void forceAddPlayerToQueue(final UUID player) {

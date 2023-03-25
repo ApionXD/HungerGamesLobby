@@ -42,10 +42,12 @@ public class BungeeMessageHandler {
                 int playerCount = message.readInt();
                 final Pair<String, Integer> serverNamePlayerCountPair = Pair.of(serverName, playerCount);
                 future.complete(serverNamePlayerCountPair);
+                futures.remove(nextInLine);
             }
             case "GetServers" -> {
                 List<String> serverList = Arrays.stream(message.readUTF().split(", ")).toList();
                 future.complete(serverList);
+                futures.remove(nextInLine);
             }
             default -> logger.warning("Received a message with type " + messageType + " , but had nothing to do");
         }
