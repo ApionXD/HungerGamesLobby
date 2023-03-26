@@ -9,8 +9,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 public class HungeeServerExecutor {
@@ -31,7 +35,14 @@ public class HungeeServerExecutor {
         player.sendPluginMessage(HungerGamesLobby.getInstance(), "BungeeCord", message.toByteArray());
     }
 
-    public void sendInitArenaMessage(String serverName) {
-        writeStringMessage(serverName, "InitArena");
+    public void sendInitArenaMessage(String serverName, String arenaName) {
+        writeStringMessage(serverName,  "InitArena " + arenaName);
+    }
+    public void sendArenaMoveMessage(String serverName, String arenaName, Collection<UUID> playerUuids) {
+        StringBuilder messageText = new StringBuilder();
+        messageText.append("ArenaMove ");
+        messageText.append(arenaName).append(" ");
+        messageText.append(playerUuids.stream().map(UUID::toString).collect(Collectors.joining(",")));
+        writeStringMessage(serverName, messageText.toString());
     }
 }

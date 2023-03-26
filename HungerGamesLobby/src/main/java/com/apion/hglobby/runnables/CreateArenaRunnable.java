@@ -46,7 +46,6 @@ public class CreateArenaRunnable extends BukkitRunnable {
                     final List<String> serverList = new ArrayList<>((List<String>) servers);
                     logger.warning(String.valueOf(serverList.size()));
                     serverList.remove(HungerGamesLobby.getInstance().getStringFromConfig("bungee.serverName"));
-                    logger.warning("Here");
                     final CompletableFuture<Object>[] playerCountRequests = new CompletableFuture[serverList.size()];
                     for (int i = 0; i < serverList.size(); i++) {
                         CompletableFuture<Object> playerCountRequest = BungeeMessageExecutor.getPlayerCountForServer(serverList.get(i));
@@ -62,9 +61,10 @@ public class CreateArenaRunnable extends BukkitRunnable {
                     CompletableFuture.allOf(playerCountRequests).whenComplete((f,e) -> {
                         String serverName = playerCountMap.entrySet().stream().min(Map.Entry.comparingByValue()).get().getKey();
                         logger.warning(String.format("Sending arena initialization msg to %s", serverName));
+                        String arenaName = UUID.randomUUID().toString().substring(0, 8);
                         HungeeServerExecutor serverMessager = HungerGamesLobby.hungeeServerExecutor;
-                        serverMessager.sendInitArenaMessage(serverName);
-                        new MovePlayersRunnable(players, bossBarKey, serverName).runTaskLater(
+                        serverMessager.sendInitArenaMessage(serverName, arenaName);
+                        new MovePlayersRunnable(players, bossBarKey, serverName, arenaName).runTaskLater(
                                 HungerGamesLobby.getInstance(),
                                 delay
                         );

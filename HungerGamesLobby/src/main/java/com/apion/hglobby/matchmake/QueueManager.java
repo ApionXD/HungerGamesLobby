@@ -13,6 +13,8 @@ import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.logging.Logger;
 
@@ -41,6 +43,17 @@ public class QueueManager {
                 BarColor.RED,
                 BarStyle.SEGMENTED_12
         );
+        //Removes queues after they are cancelled
+         new BukkitRunnable() {
+            @Override
+            public void run() {
+                for (ArenaTimerRunnable runnable : queuesInProgress) {
+                    if (runnable.isCancelled()) {
+                        queuesInProgress.remove(runnable);
+                    }
+                }
+            }
+        }.runTaskTimer(HungerGamesLobby.getInstance(), 0, 100);
     }
 
     public void registerIntoQueue(final Player player) {

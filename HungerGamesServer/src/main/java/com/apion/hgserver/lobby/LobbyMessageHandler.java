@@ -11,18 +11,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+import java.util.UUID;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
-@NoArgsConstructor
 public class LobbyMessageHandler implements PluginMessageListener {
     private static Logger logger = Bukkit.getLogger();
     private ArenaInitializer arenaInitializer;
-
-
-    public void init() {
+    public LobbyMessageHandler(ArenaInitializer initializer) {
         final HungerGamesServer instance = HungerGamesServer.getInstance();
         instance.getServer().getMessenger().registerIncomingPluginChannel(instance, ChannelNames.BUNGEE.channelName, this);
-        arenaInitializer = new ArenaInitializer();
+        arenaInitializer = initializer;
     }
 
     @Override
@@ -36,14 +36,22 @@ public class LobbyMessageHandler implements PluginMessageListener {
                 short msgLen = messageWrapper.readShort();
                 byte[] messageBytes = new byte[msgLen];
                 messageWrapper.readFully(messageBytes);
-                String command = new String(messageBytes);
-                switch (command) {
+                String messageStr = new String(messageBytes);
+                String[] messageContents = messageStr.split(" ");
+                switch (messageContents[0]) {
                     case "InitArena" -> {
-                        logger.warning("Got message to init arena");
-                        arenaInitializer.initializeArena();
+                        String arenaName = messageContents[1];
+                        logger.warning("Got message to init arena " + arenaName);
+                        arenaInitializer.initializeArena(arenaName);
+                    }
+                    case "ArenaMove" -> {
+                        String arena = messageContents[1];
+                        String uuids = messageContents[2];
+                        logger.warning("Moving players to " + arena);
+                        Arrays.stream(uuids.split(",")).map(UUID::fromString).forEach(uuid -> arenaInitializer.addPlayerToMap(uuid, arena));
                     }
                     default -> {
-                        logger.severe("Got command from hub " + command + " but no actions defined");
+                        logger.severe("Got command from hub " + messageContents[0] + " but no actions defined");
                     }
                 }
             }

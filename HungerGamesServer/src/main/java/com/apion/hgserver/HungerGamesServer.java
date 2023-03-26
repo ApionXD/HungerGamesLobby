@@ -1,6 +1,8 @@
 package com.apion.hgserver;
 
+import com.apion.hgserver.arena.ArenaInitializer;
 import com.apion.hgserver.database.Database;
+import com.apion.hgserver.listener.PlayerJoinListener;
 import com.apion.hgserver.lobby.LobbyMessageHandler;
 import com.mysql.cj.jdbc.MysqlConnectionPoolDataSource;
 import com.mysql.cj.jdbc.MysqlDataSource;
@@ -24,6 +26,8 @@ public class HungerGamesServer extends JavaPlugin {
     @Getter
     private static MultiverseCore mvPlugin;
     private static LobbyMessageHandler lobbyMessageHandler;
+    private static PlayerJoinListener playerJoinListener;
+    private static ArenaInitializer arenaInitializer;
 
     @Override
     public void onEnable() {
@@ -32,7 +36,9 @@ public class HungerGamesServer extends JavaPlugin {
         hgPlugin = (HG) Bukkit.getPluginManager().getPlugin("HungerGames");
         mvPlugin = (MultiverseCore) Bukkit.getPluginManager().getPlugin("Multiverse-Core");
         Database.initConnection();
-        lobbyMessageHandler = new LobbyMessageHandler();
-        lobbyMessageHandler.init();
+        arenaInitializer = new ArenaInitializer();
+        lobbyMessageHandler = new LobbyMessageHandler(arenaInitializer);
+        playerJoinListener = new PlayerJoinListener(arenaInitializer);
+        Bukkit.getServer().getPluginManager().registerEvents(playerJoinListener, this);
     }
 }

@@ -21,11 +21,13 @@ public class MovePlayersRunnable extends BukkitRunnable {
     private final Queue<UUID> players;
     private final NamespacedKey bossBarKey;
     private final String serverName;
+    private final String arenaName;
 
-    public MovePlayersRunnable(Queue<UUID> players, NamespacedKey bossBarKey, String serverName) {
+    public MovePlayersRunnable(Queue<UUID> players, NamespacedKey bossBarKey, String serverName, String arenaName) {
         this.players = players;
         this.bossBarKey = bossBarKey;
         this.serverName = serverName;
+        this.arenaName = arenaName;
     }
 
     @Override
@@ -37,6 +39,7 @@ public class MovePlayersRunnable extends BukkitRunnable {
             Bukkit.removeBossBar(bossBarKey);
         }
         logger.warning(MessageFormat.format("Moving {0} players into {1}", players.size(), serverName));
+        HungerGamesLobby.hungeeServerExecutor.sendArenaMoveMessage(serverName, arenaName, players);
         for (UUID p : players) {
             ByteArrayDataOutput message = ByteStreams.newDataOutput();
             message.writeUTF("Connect");
