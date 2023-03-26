@@ -46,7 +46,7 @@ test {
 dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.26'
     annotationProcessor 'org.projectlombok:lombok:1.18.26'
-    api('tk.shanebee.hg:hungergames:5.2.2')
+    api('tk.shanebee.hg:hungergames:5.2.3')
     api('org.spigotmc:spigot-api:1.19.3-R0.1-SNAPSHOT')
     compileOnly('com.onarandombox.multiversecore:multiverse-core:4.3.2')
     implementation('com.google.guava:guava:latest')

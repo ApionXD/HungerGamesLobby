@@ -43,11 +43,12 @@ public class CreateArenaRunnable extends BukkitRunnable {
 
         BungeeMessageExecutor.getServerList().whenComplete(
                 (servers, throwable) -> {
-                    final List<String> serverList = (List<String>) servers;
+                    final List<String> serverList = new ArrayList<>((List<String>) servers);
                     logger.warning(String.valueOf(serverList.size()));
+                    serverList.remove(HungerGamesLobby.getInstance().getStringFromConfig("bungee.serverName"));
+                    logger.warning("Here");
                     final CompletableFuture<Object>[] playerCountRequests = new CompletableFuture[serverList.size()];
                     for (int i = 0; i < serverList.size(); i++) {
-                        if (serverList.get(i).equals(HungerGamesLobby.getInstance().getStringFromConfig("bungee.serverName"))) continue;
                         CompletableFuture<Object> playerCountRequest = BungeeMessageExecutor.getPlayerCountForServer(serverList.get(i));
                         playerCountRequests[i] = playerCountRequest;
                         playerCountRequest.whenComplete(

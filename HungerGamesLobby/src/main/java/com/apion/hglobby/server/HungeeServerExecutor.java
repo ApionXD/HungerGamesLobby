@@ -21,7 +21,7 @@ public class HungeeServerExecutor {
         message.writeUTF("Forward");
         //message.writeUTF(serverName);
         //For debugging
-        message.writeUTF("sg1");
+        message.writeUTF(serverName);
         message.writeUTF(ChannelNames.HUNGEE_GAMES_MANAGER.channelName);
         byte[] messageContents = messageText.getBytes(StandardCharsets.UTF_8);
         message.writeShort(messageContents.length);
