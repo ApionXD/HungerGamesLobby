@@ -9,6 +9,7 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.KeyedBossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.text.MessageFormat;
 import java.util.Queue;
@@ -29,6 +30,7 @@ public class ArenaTimerRunnable extends BukkitRunnable {
     int delay;
     int currentTimer;
     int maxPlayers;
+    private BukkitTask countOffTask;
 
     public ArenaTimerRunnable (final Queue<UUID> players, final int delay, final int maxPlayers) {
         for (UUID uuid : players) {
@@ -44,7 +46,7 @@ public class ArenaTimerRunnable extends BukkitRunnable {
     public void run() {
         logger.info(MessageFormat.format("Queue {0} created with {1} player(s)", this.queueUuid, this.players.size()));
         // Update bossbar and cancel after delay, update every second
-        new BukkitRunnable() {
+        countOffTask = new BukkitRunnable() {
             int runs = 0;
             @Override
             public void run() {
@@ -59,8 +61,18 @@ public class ArenaTimerRunnable extends BukkitRunnable {
             }
         }.runTaskTimer(HungerGamesLobby.getInstance(), 0, 20);
 
+
         // Create arena
         new CreateArenaRunnable(players, bossBarKey, delay).runTask(HungerGamesLobby.getInstance());
+    }
+
+    @Override
+    public synchronized boolean isCancelled() throws IllegalStateException {
+        if (countOffTask.isCancelled()) {
+            this.cancel();
+            return true;
+        }
+        return super.isCancelled();
     }
 
     public void forceAddPlayerToQueue(final UUID player) {

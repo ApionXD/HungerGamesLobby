@@ -43,20 +43,11 @@ public class QueueManager {
                 BarColor.RED,
                 BarStyle.SEGMENTED_12
         );
-        //Removes queues after they are cancelled
-         new BukkitRunnable() {
-            @Override
-            public void run() {
-                for (ArenaTimerRunnable runnable : queuesInProgress) {
-                    if (runnable.isCancelled()) {
-                        queuesInProgress.remove(runnable);
-                    }
-                }
-            }
-        }.runTaskTimer(HungerGamesLobby.getInstance(), 0, 100);
     }
 
     public void registerIntoQueue(final Player player) {
+        //Removes all finished queues
+        queuesInProgress.removeIf(BukkitRunnable::isCancelled);
         final UUID playerUUID = player.getUniqueId();
         boolean addedPlayerToExistingQueue = false;
         // Check if any queues are in progress and have space
