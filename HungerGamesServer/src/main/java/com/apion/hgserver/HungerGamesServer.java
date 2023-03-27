@@ -4,12 +4,16 @@ import com.apion.hgserver.arena.ArenaInitializer;
 import com.apion.hgserver.database.Database;
 import com.apion.hgserver.listener.PlayerJoinListener;
 import com.apion.hgserver.lobby.LobbyMessageHandler;
+import com.apion.hgserver.stats.StatTracker;
 import com.onarandombox.MultiverseCore.MultiverseCore;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import tk.shanebee.hg.HG;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 public class HungerGamesServer extends JavaPlugin {
@@ -21,7 +25,6 @@ public class HungerGamesServer extends JavaPlugin {
     @Getter
     private static MultiverseCore mvPlugin;
     private static LobbyMessageHandler lobbyMessageHandler;
-    private static PlayerJoinListener playerJoinListener;
     private static ArenaInitializer arenaInitializer;
 
     @Override
@@ -34,7 +37,12 @@ public class HungerGamesServer extends JavaPlugin {
         Database.initConnection();
         arenaInitializer = new ArenaInitializer();
         lobbyMessageHandler = new LobbyMessageHandler(arenaInitializer);
-        playerJoinListener = new PlayerJoinListener(arenaInitializer);
-        Bukkit.getServer().getPluginManager().registerEvents(playerJoinListener, this);
+
+        final List<Listener> listeners = new ArrayList<>();
+        listeners.add( new PlayerJoinListener(arenaInitializer) );
+        listeners.add( new StatTracker() );
+        for (final Listener l : listeners) {
+            Bukkit.getPluginManager().registerEvents(l, this);
+        }
     }
 }

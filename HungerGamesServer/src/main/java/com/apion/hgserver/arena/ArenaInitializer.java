@@ -34,37 +34,55 @@ public class ArenaInitializer {
     public void initializeArena(String arenaName) {
         String templateArenaName = "template1";
         List<Game> arenas = hgPlugin.getGames();
-        Optional<Game> templateArena = arenas.stream().filter((game -> game.getGameArenaData().getName().equals(templateArenaName))).findAny();
-        templateArena.ifPresent((ta) -> {
-            mvPlugin.getMVWorldManager().cloneWorld(ta.getGameArenaData().getBound().getWorld().getName(), arenaName);
-            logger.warning("World copied");
-            World newWorld = Bukkit.getWorld(arenaName);
+        Game arenaTemplate = arenas.stream().filter((game -> game.getGameArenaData().getName().equals(templateArenaName)))
+                .findAny()
+                .orElseThrow(() -> new IllegalStateException("No template arena matching " + templateArenaName));
 
-            GameArenaData ga = ta.getGameArenaData();
-            Location corner1 = ga.getBound().getGreaterCorner();
-            Location corner2 = ga.getBound().getLesserCorner();
-            Bound b = new Bound(arenaName, corner1.getBlockX(), corner1.getBlockY(), corner1.getBlockZ(), corner2.getBlockX(), corner2.getBlockY(), corner2.getBlockZ());
-            List<Location> newSpawns  = new ArrayList<>(ga.getSpawns());
-            newSpawns.forEach(l -> {
-                l.setWorld(newWorld);
-            });
-            int timer = ga.getTimer();
-            Game newGame = new Game(arenaName, b, newSpawns, ta.getGameBlockData().getSign1(), timer, ga.getMinPlayers(), ga.getMaxPlayers(), ga.getRoamTime(), true, ga.getCost());
-            newGame.getGameArenaData().setStatus(Status.READY);
-            hgPlugin.getGames().add(newGame);
-        });
+        mvPlugin.getMVWorldManager().cloneWorld(arenaTemplate.getGameArenaData().getBound().getWorld().getName(), arenaName);
+        logger.warning("World copied");
+        World newWorld = Bukkit.getWorld(arenaName);
 
+        GameArenaData ga = arenaTemplate.getGameArenaData();
+        Location corner1 = ga.getBound().getGreaterCorner();
+        Location corner2 = ga.getBound().getLesserCorner();
+        Bound b = new Bound(arenaName, corner1.getBlockX(), corner1.getBlockY(), corner1.getBlockZ(), corner2.getBlockX(), corner2.getBlockY(), corner2.getBlockZ());
+        List<Location> newSpawns  = new ArrayList<>(ga.getSpawns());
+        newSpawns.forEach(l -> l.setWorld(newWorld));
+        int timer = ga.getTimer();
+        Game newGame = new Game(
+                arenaName,
+                b,
+                newSpawns,
+                arenaTemplate.getGameBlockData().getSign1(),
+                timer,
+                ga.getMinPlayers(),
+                ga.getMaxPlayers(),
+                ga.getRoamTime(),
+                true,
+                ga.getCost()
+        );
+        newGame.getGameArenaData().setStatus(Status.READY);
+        hgPlugin.getGames().add(newGame);
     }
     public void putPlayerInArena(UUID playerUuid) {
-        Optional<Player> player = Optional.of(Bukkit.getPlayer(playerUuid));
+        Player player = Optional.ofNullable(Bukkit.getPlayer(playerUuid))
+                .orElseThrow(() -> {
+                    logger.severe("Player " + playerUuid + " didn't exist.");
+                    return new IllegalStateException("Couldn't place player in arena because they don't exist");
+                });
         if (!playersWaitingToBeMoved.containsKey(playerUuid)) {
-            player.ifPresent(p -> p.sendMessage("You are not currently supposed to be in a game!"));
+            player.sendMessage("You are not currently supposed to be in a game!");
         }
+
         String arenaName = playersWaitingToBeMoved.get(playerUuid);
-        Optional<Game> arenaOpt = hgPlugin.getGames().stream().filter(game -> game.getGameArenaData().getName().equals(arenaName)).findAny();
-        arenaOpt.ifPresent(game -> {
-            game.getGamePlayerData().join(player.get());
-        });
+        Game arena = hgPlugin.getGames()
+                .stream()
+                .filter(game -> game.getGameArenaData().getName().equals(arenaName))
+                .findAny()
+                .orElseThrow(
+                        () -> new IllegalStateException("Couldn't find arena " + arenaName + " to place player in.")
+                );
+        arena.getGamePlayerData().join(player);
     }
     public void addPlayerToMap(UUID player, String arena) {
         playersWaitingToBeMoved.put(player, arena);
