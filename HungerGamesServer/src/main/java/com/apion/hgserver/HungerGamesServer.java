@@ -2,6 +2,7 @@ package com.apion.hgserver;
 
 import com.apion.hgserver.arena.ArenaInitializer;
 import com.apion.hgserver.database.Database;
+import com.apion.hgserver.listener.GameEndListener;
 import com.apion.hgserver.listener.PlayerJoinListener;
 import com.apion.hgserver.lobby.LobbyMessageHandler;
 import com.apion.hgserver.stats.StatTracker;
@@ -41,6 +42,7 @@ public class HungerGamesServer extends JavaPlugin {
         final List<Listener> listeners = new ArrayList<>();
         listeners.add( new PlayerJoinListener(arenaInitializer) );
         listeners.add( new StatTracker() );
+        listeners.add(new GameEndListener());
         for (final Listener l : listeners) {
             Bukkit.getPluginManager().registerEvents(l, this);
         }
