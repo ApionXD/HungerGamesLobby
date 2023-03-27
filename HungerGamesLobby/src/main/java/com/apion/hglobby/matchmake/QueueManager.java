@@ -7,6 +7,7 @@ import com.apion.hglobby.runnables.ArenaTimerRunnable;
 import java.text.MessageFormat;
 import java.util.*;
 
+import com.apion.hglobby.runnables.Futures;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
@@ -71,7 +72,7 @@ public class QueueManager {
 
             if (playerList.size() >= requiredPlayers) {
                 logger.info("Getting lowest player count server and sending to Arena queue runnable");
-                BungeeMessageExecutor.getServerWithMinPlayers()
+                new Futures().getServerWithMinPlayers()
                         .whenComplete(
                                 (creatingOnServer, throwable) -> {
                                     queueBossBar.removeAll();

@@ -44,9 +44,6 @@ public class ArenaTimerRunnable extends BukkitRunnable {
      * @param destination Destination server to both create the arena and move the players into.
      */
     public ArenaTimerRunnable(final Queue<UUID> players, final int delay, final int maxPlayers, final String destination) {
-        for (UUID uuid : players) {
-            System.out.println(uuid);
-        }
         this.players = players;
         this.delay = delay;
         this.currentTimerCountingDown = delay;

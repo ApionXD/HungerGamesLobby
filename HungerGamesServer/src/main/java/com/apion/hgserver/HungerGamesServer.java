@@ -27,6 +27,7 @@ public class HungerGamesServer extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        this.saveDefaultConfig();
         super.onEnable();
         hgPlugin = (HG) Bukkit.getPluginManager().getPlugin("HungerGames");
         mvPlugin = (MultiverseCore) Bukkit.getPluginManager().getPlugin("Multiverse-Core");

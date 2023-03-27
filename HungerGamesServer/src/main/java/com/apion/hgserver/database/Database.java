@@ -39,7 +39,7 @@ public class Database {
         final int    port = instance.getConfig().getInt("database.port");
         final String name = instance.getConfig().getString("database.name");
         final String user = instance.getConfig().getString("database.username");
-        final String pass = instance.getConfig().getString("database.pass");
+        final String pass = instance.getConfig().getString("database.password");
 
         MysqlDataSource dataSource = new MysqlConnectionPoolDataSource();
         dataSource.setServerName(host);

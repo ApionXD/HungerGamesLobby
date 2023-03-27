@@ -5,7 +5,6 @@ import com.apion.hgserver.arena.ArenaInitializer;
 import com.apion.hgserver.enums.ChannelNames;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
-import lombok.NoArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
@@ -14,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.UUID;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 public class LobbyMessageHandler implements PluginMessageListener {
     private static Logger logger = Bukkit.getLogger();
