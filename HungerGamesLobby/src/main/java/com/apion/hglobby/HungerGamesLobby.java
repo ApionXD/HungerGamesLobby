@@ -4,7 +4,13 @@ import com.apion.hglobby.bungee.BungeeMessageListener;
 import com.apion.hglobby.matchmake.QueueCommand;
 import com.apion.hglobby.matchmake.QueueManager;
 import com.apion.hglobby.server.HungeeServerExecutor;
+import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
+
 public class HungerGamesLobby extends JavaPlugin {
     private static HungerGamesLobby instance;
     public static QueueManager queueManager;

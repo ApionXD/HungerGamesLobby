@@ -69,6 +69,7 @@ public class ArenaTimerRunnable extends BukkitRunnable {
                 runs++;
                 if (runs >= delay / 20) {
                     final BossBar queueBossBar = Bukkit.getBossBar(bossBarKey);
+                    Bukkit.getServer().removeBossBar(bossBarKey);
 
                     if (queueBossBar != null) {
                         queueBossBar.removeAll();
