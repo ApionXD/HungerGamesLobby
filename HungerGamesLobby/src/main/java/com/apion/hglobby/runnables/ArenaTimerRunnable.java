@@ -6,14 +6,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.boss.KeyedBossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.text.MessageFormat;
-import java.util.Queue;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class ArenaTimerRunnable extends BukkitRunnable {
@@ -28,42 +28,64 @@ public class ArenaTimerRunnable extends BukkitRunnable {
             queueUuid.toString()
     );
     int delay;
-    int currentTimer;
+    int currentTimerCountingDown;
     int maxPlayers;
     private BukkitTask countOffTask;
+    String destination;
+    String arenaName;
 
-    public ArenaTimerRunnable (final Queue<UUID> players, final int delay, final int maxPlayers) {
+    /**
+     * This class will periodically update the bossbar for the players in the playerList.
+     * Upon first creation, it will also initialize a task to create the arena on the server
+     * named destination that those players will be moved into when currentTimer = 0.
+     * @param players Players to update with the bossbar
+     * @param delay How long it will take to move players into their game
+     * @param maxPlayers Max amount of players in the queue
+     * @param destination Destination server to both create the arena and move the players into.
+     */
+    public ArenaTimerRunnable(final Queue<UUID> players, final int delay, final int maxPlayers, final String destination) {
         for (UUID uuid : players) {
             System.out.println(uuid);
         }
         this.players = players;
         this.delay = delay;
-        this.currentTimer = delay;
+        this.currentTimerCountingDown = delay;
         this.maxPlayers = maxPlayers;
+        this.destination = destination;
+        this.arenaName = UUID.randomUUID().toString().substring(0, 8);
     }
 
     @Override
     public void run() {
         logger.info(MessageFormat.format("Queue {0} created with {1} player(s)", this.queueUuid, this.players.size()));
+        // Create arena
+        new CreateArenaRunnable(destination, arenaName).runTask(HungerGamesLobby.getInstance());
         // Update bossbar and cancel after delay, update every second
         countOffTask = new BukkitRunnable() {
             int runs = 0;
             @Override
             public void run() {
-                currentTimer -= 20;
+                currentTimerCountingDown -= 20;
                 for (final UUID player : players) {
                     showArenaBossBarToPlayer(Bukkit.getPlayer(player));
                 }
                 runs++;
                 if (runs >= delay / 20) {
+                    final BossBar queueBossBar = Bukkit.getBossBar(bossBarKey);
+
+                    if (queueBossBar != null) {
+                        queueBossBar.removeAll();
+                        Bukkit.removeBossBar(bossBarKey);
+                    }
+
+                    new MovePlayersRunnable(players, bossBarKey, destination, arenaName).runTaskLater(
+                            HungerGamesLobby.getInstance(),
+                            delay
+                    );
                     this.cancel();
                 }
             }
         }.runTaskTimer(HungerGamesLobby.getInstance(), 0, 20);
-
-
-        // Create arena
-        new CreateArenaRunnable(players, bossBarKey, delay).runTask(HungerGamesLobby.getInstance());
     }
 
     @Override
@@ -99,7 +121,7 @@ public class ArenaTimerRunnable extends BukkitRunnable {
      * send them a chat message or something.
      */
     private void showArenaBossBarToPlayer(final Player player) {
-        String bossBarTitle = String.format(BOSS_BAR_TITLE, players.size(), maxPlayers, currentTimer / 20);
+        String bossBarTitle = String.format(BOSS_BAR_TITLE, players.size(), maxPlayers, currentTimerCountingDown / 20);
         KeyedBossBar queueBossBar = Bukkit.getBossBar(bossBarKey);
 
         if (queueBossBar == null) {

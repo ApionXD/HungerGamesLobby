@@ -1,6 +1,7 @@
 package com.apion.hglobby.matchmake;
 
 import com.apion.hglobby.HungerGamesLobby;
+import com.apion.hglobby.bungee.BungeeMessageExecutor;
 import com.apion.hglobby.runnables.ArenaTimerRunnable;
 
 import java.text.MessageFormat;
@@ -14,7 +15,6 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.logging.Logger;
 
@@ -70,16 +70,22 @@ public class QueueManager {
             final int requiredPlayers = HungerGamesLobby.getInstance().getIntFromConfirm("queue.requiredPlayers");
 
             if (playerList.size() >= requiredPlayers) {
-                logger.info("Sending to Arena queue runnable");
-                queueBossBar.removeAll();
-                final ArenaTimerRunnable runnable = new ArenaTimerRunnable(
-                        new LinkedList<>(playerList),
-                        HungerGamesLobby.getInstance().getIntFromConfirm("queue.delayToRunArena"),
-                        HungerGamesLobby.getInstance().getIntFromConfirm("queue.maxPlayers")
-                );
-                runnable.runTask(HungerGamesLobby.getInstance());
-                queuesInProgress.add(runnable);
-                playerList.clear();
+                logger.info("Getting lowest player count server and sending to Arena queue runnable");
+                BungeeMessageExecutor.getServerWithMinPlayers()
+                        .whenComplete(
+                                (creatingOnServer, throwable) -> {
+                                    queueBossBar.removeAll();
+                                    final ArenaTimerRunnable runnable = new ArenaTimerRunnable(
+                                            new LinkedList<>(playerList),
+                                            HungerGamesLobby.getInstance().getIntFromConfirm("queue.delayToRunArena"),
+                                            HungerGamesLobby.getInstance().getIntFromConfirm("queue.maxPlayers"),
+                                            creatingOnServer
+                                    );
+                                    runnable.runTask(HungerGamesLobby.getInstance());
+                                    queuesInProgress.add(runnable);
+                                    playerList.clear();
+                                }
+                        );
             }
             else {
                 showQueueBossBarToPlayer(player, requiredPlayers);
@@ -91,8 +97,8 @@ public class QueueManager {
      * Finds the existing boss bar and adds the player to it.
      *
      * @param player Player to add
-     *                             TODO: This doesn't work for old clients, need to check for old protocol version and
-     *                             send them a chat message or something.
+     * TODO: This doesn't work for old clients, need to check for old protocol version and
+     * send them a chat message or something.
      */
     private void showQueueBossBarToPlayer(final Player player, final int requiredPlayers) {
         String bossBarTitle = String.format(BOSS_BAR_TITLE, playerList.size(), requiredPlayers);

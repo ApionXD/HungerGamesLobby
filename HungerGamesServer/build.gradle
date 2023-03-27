@@ -51,7 +51,7 @@ dependencies {
     compileOnly('com.onarandombox.multiversecore:multiverse-core:4.3.2')
     implementation('com.google.guava:guava:latest')
     implementation('org.jetbrains:annotations:16.0.2')
-    implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.25'
+    implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.28'
     compileOnly 'net.luckperms:api:5.4'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.1'

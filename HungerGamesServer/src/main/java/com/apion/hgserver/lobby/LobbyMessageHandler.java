@@ -28,11 +28,11 @@ public class LobbyMessageHandler implements PluginMessageListener {
     @Override
     public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, @NotNull byte[] message) {
         if (channel.equals(ChannelNames.BUNGEE.channelName)) {
-            logger.warning("Got bungee message");
+            logger.info("Got bungee message");
             ByteArrayDataInput messageWrapper = ByteStreams.newDataInput(message);
             String subchannel = messageWrapper.readUTF();
             if (subchannel.equals(ChannelNames.HUNGEE_GAMES_MANAGER.channelName)) {
-                logger.warning("Got Hungee message");
+                logger.info("Got Hungee message");
                 short msgLen = messageWrapper.readShort();
                 byte[] messageBytes = new byte[msgLen];
                 messageWrapper.readFully(messageBytes);
@@ -41,18 +41,16 @@ public class LobbyMessageHandler implements PluginMessageListener {
                 switch (messageContents[0]) {
                     case "InitArena" -> {
                         String arenaName = messageContents[1];
-                        logger.warning("Got message to init arena " + arenaName);
+                        logger.info("Got message to init arena " + arenaName);
                         arenaInitializer.initializeArena(arenaName);
                     }
                     case "ArenaMove" -> {
                         String arena = messageContents[1];
                         String uuids = messageContents[2];
-                        logger.warning("Moving players to " + arena);
+                        logger.info("Moving players to " + arena);
                         Arrays.stream(uuids.split(",")).map(UUID::fromString).forEach(uuid -> arenaInitializer.addPlayerToMap(uuid, arena));
                     }
-                    default -> {
-                        logger.severe("Got command from hub " + messageContents[0] + " but no actions defined");
-                    }
+                    default -> logger.severe("Got command from hub " + messageContents[0] + " but no actions defined");
                 }
             }
         }
