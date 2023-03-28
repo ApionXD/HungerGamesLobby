@@ -1,5 +1,6 @@
 bungee:
   serverName: serverName
+  mainServerName: lobby
 database:
   host: host
   name: name
