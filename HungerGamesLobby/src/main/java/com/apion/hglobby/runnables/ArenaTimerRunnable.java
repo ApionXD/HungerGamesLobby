@@ -76,7 +76,7 @@ public class ArenaTimerRunnable extends BukkitRunnable {
                         Bukkit.removeBossBar(bossBarKey);
                     }
 
-                    new MovePlayersRunnable(players, bossBarKey, destination, arenaName).runTask(
+                    new MovePlayersToArenaRunnable(players, bossBarKey, destination, arenaName).runTask(
                             HungerGamesLobby.getInstance()
                     );
                     this.cancel();

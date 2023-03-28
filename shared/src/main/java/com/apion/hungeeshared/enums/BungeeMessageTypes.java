@@ -1,4 +1,4 @@
-package com.apion.hglobby.enums;
+package com.apion.hungeeshared.enums;
 
 public enum BungeeMessageTypes {
     GET_SERVERS("GetServers"),

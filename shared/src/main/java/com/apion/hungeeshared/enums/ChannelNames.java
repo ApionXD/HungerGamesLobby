@@ -1,4 +1,4 @@
-package com.apion.hglobby.enums;
+package com.apion.hungeeshared.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

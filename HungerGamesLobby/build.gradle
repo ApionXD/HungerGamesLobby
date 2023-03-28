@@ -37,6 +37,8 @@ test {
 }
 
 dependencies {
+    implementation project(path: ':shared')
+
     compileOnly 'org.projectlombok:lombok:1.18.26'
     annotationProcessor 'org.projectlombok:lombok:1.18.26'
     api('tk.shanebee.hg:hungergames:5.2.3')

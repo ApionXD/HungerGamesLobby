@@ -11,6 +11,7 @@ import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+import server.HungeeServerExecutor;
 import tk.shanebee.hg.HG;
 
 import java.util.ArrayList;
@@ -27,6 +28,8 @@ public class HungerGamesServer extends JavaPlugin {
     private static MultiverseCore mvPlugin;
     private static LobbyMessageHandler lobbyMessageHandler;
     private static ArenaInitializer arenaInitializer;
+    @Getter
+    private static HungeeServerExecutor hungeeServerExecutor;
 
     @Override
     public void onEnable() {
@@ -38,6 +41,7 @@ public class HungerGamesServer extends JavaPlugin {
         Database.initConnection();
         arenaInitializer = new ArenaInitializer();
         lobbyMessageHandler = new LobbyMessageHandler(arenaInitializer);
+        hungeeServerExecutor = new HungeeServerExecutor();
 
         final List<Listener> listeners = new ArrayList<>();
         listeners.add(new PlayerJoinListener(arenaInitializer));

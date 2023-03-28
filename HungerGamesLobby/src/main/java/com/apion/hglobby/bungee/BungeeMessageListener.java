@@ -1,7 +1,7 @@
 package com.apion.hglobby.bungee;
 
 import com.apion.hglobby.HungerGamesLobby;
-import com.apion.hglobby.enums.ChannelNames;
+import com.apion.hungeeshared.enums.ChannelNames;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 import org.bukkit.entity.Player;

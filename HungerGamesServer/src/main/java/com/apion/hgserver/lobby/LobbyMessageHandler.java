@@ -2,7 +2,7 @@ package com.apion.hgserver.lobby;
 
 import com.apion.hgserver.HungerGamesServer;
 import com.apion.hgserver.arena.ArenaInitializer;
-import com.apion.hgserver.enums.ChannelNames;
+import com.apion.hungeeshared.enums.ChannelNames;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 import org.bukkit.Bukkit;

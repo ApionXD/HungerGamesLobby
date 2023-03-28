@@ -1,21 +1,15 @@
 package com.apion.hglobby.bungee;
 
 import com.apion.hglobby.HungerGamesLobby;
-import com.apion.hglobby.enums.BungeeMessageTypes;
-import com.apion.hglobby.enums.ChannelNames;
+import com.apion.hungeeshared.enums.BungeeMessageTypes;
+import com.apion.hungeeshared.enums.ChannelNames;
 import com.google.common.collect.Iterables;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 

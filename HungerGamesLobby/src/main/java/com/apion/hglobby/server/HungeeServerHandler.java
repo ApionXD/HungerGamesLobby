@@ -1,7 +1,7 @@
 package com.apion.hglobby.server;
 
 import com.apion.hglobby.HungerGamesLobby;
-import com.apion.hglobby.enums.ChannelNames;
+import com.apion.hungeeshared.enums.ChannelNames;
 
 public class HungeeServerHandler {
     public void init() {
