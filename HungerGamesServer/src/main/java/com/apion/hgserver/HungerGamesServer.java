@@ -40,8 +40,8 @@ public class HungerGamesServer extends JavaPlugin {
         lobbyMessageHandler = new LobbyMessageHandler(arenaInitializer);
 
         final List<Listener> listeners = new ArrayList<>();
-        listeners.add( new PlayerJoinListener(arenaInitializer) );
-        listeners.add( new StatTracker() );
+        listeners.add(new PlayerJoinListener(arenaInitializer));
+        listeners.add(new StatTracker());
         listeners.add(new GameEndListener());
         for (final Listener l : listeners) {
             Bukkit.getPluginManager().registerEvents(l, this);

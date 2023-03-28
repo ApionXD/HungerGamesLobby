@@ -12,6 +12,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -38,13 +39,18 @@ public class MovePlayersRunnable extends BukkitRunnable {
             queueBossBar.removeAll();
             Bukkit.removeBossBar(bossBarKey);
         }
-        logger.warning(MessageFormat.format("Moving {0} players into {1}", players.size(), serverName));
+        logger.info(MessageFormat.format("Moving {0} players into {1}", players.size(), serverName));
         HungerGamesLobby.hungeeServerExecutor.sendArenaMoveMessage(serverName, arenaName, players);
         for (UUID p : players) {
             ByteArrayDataOutput message = ByteStreams.newDataOutput();
             message.writeUTF("Connect");
             message.writeUTF(serverName);
-            Bukkit.getPlayer(p).sendPluginMessage(HungerGamesLobby.getInstance(), ChannelNames.BUNGEE.channelName, message.toByteArray());
+            Optional.ofNullable(Bukkit.getPlayer(p))
+                    .orElseThrow(() -> {
+                        logger.warning("Player " + p + " wasn't present to move");
+                        return new IllegalStateException();
+                    })
+                    .sendPluginMessage(HungerGamesLobby.getInstance(), ChannelNames.BUNGEE.channelName, message.toByteArray());
         }
     }
 }

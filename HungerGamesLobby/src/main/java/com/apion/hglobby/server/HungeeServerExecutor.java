@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 public class HungeeServerExecutor {
     private static final Logger logger = Bukkit.getLogger();
     public void writeStringMessage(String serverName, String messageText) {
-        logger.warning("Sending msg");
         ByteArrayDataOutput message = ByteStreams.newDataOutput();
         message.writeUTF("Forward");
         //message.writeUTF(serverName);

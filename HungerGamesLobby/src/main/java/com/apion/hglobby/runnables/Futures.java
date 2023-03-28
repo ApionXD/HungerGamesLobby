@@ -38,7 +38,7 @@ public class Futures {
                         playerCountRequest.whenComplete(
                                 (count, throwable1) -> {
                                     final Pair<String, Integer> serverNameCountPair = (Pair<String, Integer>) count;
-                                    logger.warning(MessageFormat.format("Got player count for server {0}: {1}", serverNameCountPair.getLeft(), serverNameCountPair.getRight()));
+                                    logger.info(MessageFormat.format("Got player count for server {0}: {1}", serverNameCountPair.getLeft(), serverNameCountPair.getRight()));
                                     playerCountMap.put(serverNameCountPair.getLeft(), serverNameCountPair.getRight());
                                 }
                         );

@@ -39,7 +39,7 @@ public class ArenaInitializer {
                 .orElseThrow(() -> new IllegalStateException("No template arena matching " + templateArenaName));
 
         mvPlugin.getMVWorldManager().cloneWorld(arenaTemplate.getGameArenaData().getBound().getWorld().getName(), arenaName);
-        logger.warning("World copied");
+        logger.info("World copied");
         World newWorld = Bukkit.getWorld(arenaName);
 
         GameArenaData ga = arenaTemplate.getGameArenaData();

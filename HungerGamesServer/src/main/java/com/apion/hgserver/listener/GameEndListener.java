@@ -15,7 +15,7 @@ public class GameEndListener implements Listener {
     public void onGameEnd(GameEndEvent event) {
         MultiverseCore mvPlugin = HungerGamesServer.getMvPlugin();
         String worldName = event.getGame().getGameArenaData().getBound().getWorld().getName();
-        logger.warning(String.format("Arena %s is ending", worldName));
+        logger.info(String.format("Arena %s is ending", worldName));
         mvPlugin.getMVWorldManager().deleteWorld(worldName, true, true);
         HungerGamesServer.getHgPlugin().getGames().removeIf(g -> g.getGameArenaData().getName().equals(worldName));
     }
