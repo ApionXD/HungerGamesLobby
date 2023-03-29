@@ -1,7 +1,6 @@
 package com.apion.hglobby.matchmake;
 
 import com.apion.hglobby.HungerGamesLobby;
-import com.apion.hglobby.bungee.BungeeMessageExecutor;
 import com.apion.hglobby.runnables.ArenaTimerRunnable;
 
 import java.text.MessageFormat;
@@ -44,6 +43,30 @@ public class QueueManager {
                 BarColor.RED,
                 BarStyle.SEGMENTED_12
         );
+    }
+
+    public boolean isPlayerInQueue(final Player player) {
+        return isPlayerInQueue(player.getUniqueId());
+    }
+
+    public boolean isPlayerInQueue(final UUID playerUuid) {
+        return queuesInProgress.stream().anyMatch(queue -> queue.isPlayerInQueue(playerUuid));
+    }
+
+    public void removeFromQueueIfPresent(final Player player) {
+        removeFromQueueIfPresent(player.getUniqueId());
+    }
+
+    public void removeFromQueueIfPresent(final UUID playerUuid) {
+        if (queuesInProgress.isEmpty()) {
+            return;
+        }
+
+        queuesInProgress.forEach( queue -> {
+            if (queue.isPlayerInQueue(playerUuid)) {
+                queue.removePlayerFromQueueIfPresent(playerUuid);
+            }
+        });
     }
 
     public void registerIntoQueue(final Player player) {

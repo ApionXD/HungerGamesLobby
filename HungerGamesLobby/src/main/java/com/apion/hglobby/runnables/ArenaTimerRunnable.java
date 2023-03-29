@@ -110,6 +110,10 @@ public class ArenaTimerRunnable extends BukkitRunnable {
         return players.contains(playerUuid);
     }
 
+    public void removePlayerFromQueueIfPresent(final UUID player) {
+        players.remove(player);
+    }
+
     /**
      * Finds the existing boss bar and adds the player to it.
      *
