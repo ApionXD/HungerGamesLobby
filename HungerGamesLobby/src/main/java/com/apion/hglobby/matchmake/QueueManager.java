@@ -23,7 +23,7 @@ public class QueueManager {
 
     private static final Logger logger = Bukkit.getLogger();
     //List of players in queue
-    private Queue<UUID> playerList;
+    final private Queue<UUID> playerList;
     final String BOSS_BAR_TITLE =
             ChatColor.BLUE + ChatColor.BOLD.toString() + "%s / %s needed players" +
                     ChatColor.RESET + ChatColor.LIGHT_PURPLE + " Currently In Queue";
@@ -50,7 +50,10 @@ public class QueueManager {
     }
 
     public boolean isPlayerInQueue(final UUID playerUuid) {
-        return queuesInProgress.stream().anyMatch(queue -> queue.isPlayerInQueue(playerUuid));
+        final boolean queueHasPlayer = playerList.contains(playerUuid);
+        final boolean queueInProgressHasPlayer = queuesInProgress.stream().anyMatch(queue -> queue.isPlayerInQueue(playerUuid));
+
+        return queueHasPlayer || queueInProgressHasPlayer;
     }
 
     public void removeFromQueueIfPresent(final Player player) {
@@ -58,15 +61,17 @@ public class QueueManager {
     }
 
     public void removeFromQueueIfPresent(final UUID playerUuid) {
-        if (queuesInProgress.isEmpty()) {
+        if (playerList.isEmpty() && queuesInProgress.isEmpty()) {
             return;
         }
 
-        queuesInProgress.forEach( queue -> {
-            if (queue.isPlayerInQueue(playerUuid)) {
-                queue.removePlayerFromQueueIfPresent(playerUuid);
-            }
-        });
+        if (!playerList.remove(playerUuid)) {
+            queuesInProgress.forEach(queue -> {
+                if (queue.isPlayerInQueue(playerUuid)) {
+                    queue.removePlayerFromQueueIfPresent(playerUuid);
+                }
+            });
+        }
     }
 
     public void registerIntoQueue(final Player player) {
