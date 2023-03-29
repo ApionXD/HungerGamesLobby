@@ -6,10 +6,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Bukkit;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 
@@ -46,16 +43,28 @@ public class Futures {
 
                     final CompletableFuture<Void> playerCountDone = CompletableFuture.allOf(playerCountRequests);
                     playerCountDone.whenComplete(
-                            (f, e) ->
-                                    future.complete(
-                                            playerCountMap.entrySet()
-                                                    .stream()
-                                                    .min(Map.Entry.comparingByValue())
-                                                    .orElseThrow(() -> {
-                                                        logger.severe("There were no servers to get the min players?");
-                                                        return new IllegalStateException();
-                                                    }).getKey()
-                                    )
+                            (f, e) -> {
+                                final boolean playerCountIsTheSame = playerCountMap.values().stream()
+                                        .distinct()
+                                        .count() <= 1;
+                                if (playerCountIsTheSame) {
+                                    final Random random = new Random();
+                                    String[] serverArray = playerCountMap.keySet().toArray(new String[0]);
+                                    String randomServer = serverArray[random.nextInt(serverArray.length)];
+                                    future.complete(randomServer);
+                                    return;
+                                }
+
+                                future.complete(
+                                        playerCountMap.entrySet()
+                                                .stream()
+                                                .min(Map.Entry.comparingByValue())
+                                                .orElseThrow(() -> {
+                                                    logger.severe("There were no servers to get the min players?");
+                                                    return new IllegalStateException();
+                                                }).getKey()
+                                );
+                            }
                     );
                 }
         );
