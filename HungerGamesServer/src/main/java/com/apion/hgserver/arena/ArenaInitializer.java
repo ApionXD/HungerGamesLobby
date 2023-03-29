@@ -16,28 +16,34 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.UUID;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class ArenaInitializer {
     private static final Logger logger = Bukkit.getLogger();
     private final HG hgPlugin = HungerGamesServer.getHgPlugin();
     private final MultiverseCore mvPlugin = HungerGamesServer.getMvPlugin();
     private final HashMap<UUID, String>  playersWaitingToBeMoved;
+    private final Random random;
     public ArenaInitializer() {
         playersWaitingToBeMoved = new HashMap<>();
+        random = new Random();
     }
 
     //Select random world
     //Create new Multiverse world from template world using multiverse clone
     //Create arena from world
     public void initializeArena(String arenaName) {
-        String templateArenaName = "template1";
+        String templatePrefix = HungerGamesServer.getInstance().getConfig().getString("arena.templatePrefix");
         List<Game> arenas = hgPlugin.getGames();
+        List<Game> templateArenas = arenas.stream().filter(g -> g.getGameArenaData().getName().equals(templatePrefix)).toList();
+        String templateArenaName = templateArenas.get(random.nextInt(templateArenas.size())).getGameArenaData().getName();
+        logger.info("Creating arena based on" + templateArenaName);
         Game arenaTemplate = arenas.stream().filter((game -> game.getGameArenaData().getName().equals(templateArenaName)))
                 .findAny()
                 .orElseThrow(() -> new IllegalStateException("No template arena matching " + templateArenaName));
-
         mvPlugin.getMVWorldManager().cloneWorld(arenaTemplate.getGameArenaData().getBound().getWorld().getName(), arenaName);
         logger.info("World copied");
         World newWorld = Bukkit.getWorld(arenaName);
