@@ -17,6 +17,11 @@ java {
     }
 }
 
+configurations {
+    provided
+    implementation.extendsFrom(provided)
+}
+
 repositories {
     jcenter()
     mavenCentral()
@@ -37,7 +42,7 @@ test {
 }
 
 dependencies {
-    implementation project(path: ':shared')
+    provided project(path: ':shared')
 
     compileOnly 'org.projectlombok:lombok:1.18.26'
     annotationProcessor 'org.projectlombok:lombok:1.18.26'
@@ -49,4 +54,10 @@ dependencies {
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.1'
+}
+
+
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from configurations.provided.asFileTree.files.collect { zipTree(it) }
 }
