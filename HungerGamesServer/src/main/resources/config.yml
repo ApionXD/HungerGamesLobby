@@ -7,3 +7,7 @@ database:
   port: port
   username: username
   password: password
+arena:
+    templatePrefix: template
+luckperms:
+  adminRole: admin

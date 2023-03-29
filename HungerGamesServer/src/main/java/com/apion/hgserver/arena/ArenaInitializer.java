@@ -1,7 +1,10 @@
 package com.apion.hgserver.arena;
 
 import com.apion.hgserver.HungerGamesServer;
+import com.apion.hgserver.runnables.MovePlayersToMainServerRunnable;
 import com.onarandombox.MultiverseCore.MultiverseCore;
+import net.luckperms.api.LuckPermsProvider;
+import net.luckperms.api.model.user.User;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -13,13 +16,13 @@ import tk.shanebee.hg.game.Game;
 import tk.shanebee.hg.game.GameArenaData;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 public class ArenaInitializer {
     private static final Logger logger = Bukkit.getLogger();
@@ -81,6 +84,12 @@ public class ArenaInitializer {
                 });
         if (!playersWaitingToBeMoved.containsKey(playerUuid)) {
             player.sendMessage("You are not currently supposed to be in a game!");
+            User user = Optional.ofNullable(LuckPermsProvider.get().getUserManager().getUser(playerUuid)).orElseThrow();
+            String group = user.getPrimaryGroup();
+            if (!group.equals(HungerGamesServer.getInstance().getConfig().getString("luckperms.adminRole"))) {
+                player.sendMessage("Sending you back to lobby...");
+                new MovePlayersToMainServerRunnable(Collections.singletonList(playerUuid)).runTaskLater(HungerGamesServer.getInstance(), 40);
+            }
             return;
         }
 
@@ -93,6 +102,7 @@ public class ArenaInitializer {
                         () -> new IllegalStateException("Couldn't find arena " + arenaName + " to place player in.")
                 );
         arena.getGamePlayerData().join(player);
+        playersWaitingToBeMoved.remove(playerUuid);
     }
     public void addPlayerToMap(UUID player, String arena) {
         playersWaitingToBeMoved.put(player, arena);

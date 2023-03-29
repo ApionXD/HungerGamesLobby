@@ -4,5 +4,3 @@ queue:
   requiredPlayers: 12
   maxPlayers: 16
   delayToRunArena: 200
-arena:
-  templatePrefix: template

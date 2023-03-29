@@ -20,6 +20,7 @@ public class LobbyMessageHandler implements PluginMessageListener {
     public LobbyMessageHandler(ArenaInitializer initializer) {
         final HungerGamesServer instance = HungerGamesServer.getInstance();
         instance.getServer().getMessenger().registerIncomingPluginChannel(instance, ChannelNames.BUNGEE.channelName, this);
+        instance.getServer().getMessenger().registerOutgoingPluginChannel(instance, ChannelNames.BUNGEE.channelName);
         arenaInitializer = initializer;
     }
 

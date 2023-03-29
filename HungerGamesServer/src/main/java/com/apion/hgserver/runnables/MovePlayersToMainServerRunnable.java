@@ -12,11 +12,14 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-@AllArgsConstructor
 public class MovePlayersToMainServerRunnable extends BukkitRunnable {
     private final Logger logger = Bukkit.getLogger();
     private final List<UUID> players;
     private final String serverName;
+    public MovePlayersToMainServerRunnable(List<UUID> players) {
+        this.players = players;
+        serverName = HungerGamesServer.getInstance().getConfig().getString("bungee.mainServerName");
+    }
     @Override
     public void run() {
         logger.info(MessageFormat.format("Moving {0} players into {1}", players.size(), serverName));
