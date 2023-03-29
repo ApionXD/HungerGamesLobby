@@ -1,3 +1,6 @@
 main: com.apion.hgserver.HungerGamesServer
 name: HGServer
 version: 1.0.0
+commands:
+  lobby:
+    description: Returns you to the lobby from a Hunger Game

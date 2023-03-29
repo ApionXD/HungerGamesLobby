@@ -1,6 +1,7 @@
 package com.apion.hgserver;
 
 import com.apion.hgserver.arena.ArenaInitializer;
+import com.apion.hgserver.command.GoToLobbyCommand;
 import com.apion.hgserver.database.Database;
 import com.apion.hgserver.listener.GameEndListener;
 import com.apion.hgserver.listener.PlayerJoinListener;
@@ -50,5 +51,8 @@ public class HungerGamesServer extends JavaPlugin {
         for (final Listener l : listeners) {
             Bukkit.getPluginManager().registerEvents(l, this);
         }
+
+        //noinspection DataFlowIssue
+        this.getCommand("lobby").setExecutor(new GoToLobbyCommand());
     }
 }

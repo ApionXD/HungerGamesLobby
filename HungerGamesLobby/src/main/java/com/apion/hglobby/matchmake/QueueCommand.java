@@ -8,8 +8,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class QueueCommand implements CommandExecutor {
-    private static final String COMMAND_NAME = "queue";
-    private static final String COMMAND_DESCRIPTION = "Enters you into a queue for Hunger Games";
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
