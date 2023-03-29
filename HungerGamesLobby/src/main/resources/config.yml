@@ -5,4 +5,4 @@ queue:
   maxPlayers: 16
   delayToRunArena: 200
 arena:
-  templatePrefix: "template"
+  templatePrefix: template

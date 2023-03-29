@@ -38,7 +38,7 @@ public class ArenaInitializer {
     public void initializeArena(String arenaName) {
         String templatePrefix = HungerGamesServer.getInstance().getConfig().getString("arena.templatePrefix");
         List<Game> arenas = hgPlugin.getGames();
-        List<Game> templateArenas = arenas.stream().filter(g -> g.getGameArenaData().getName().equals(templatePrefix)).toList();
+        List<Game> templateArenas = arenas.stream().filter(g -> g.getGameArenaData().getName().startsWith(templatePrefix)).toList();
         String templateArenaName = templateArenas.get(random.nextInt(templateArenas.size())).getGameArenaData().getName();
         logger.info("Creating arena based on" + templateArenaName);
         Game arenaTemplate = arenas.stream().filter((game -> game.getGameArenaData().getName().equals(templateArenaName)))
