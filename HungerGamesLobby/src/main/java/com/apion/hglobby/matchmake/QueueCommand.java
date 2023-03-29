@@ -1,6 +1,7 @@
 package com.apion.hglobby.matchmake;
 
 import com.apion.hglobby.HungerGamesLobby;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -12,7 +13,12 @@ public class QueueCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (sender instanceof Player) {
-            HungerGamesLobby.queueManager.registerIntoQueue(((Player) sender));
+            if (sender.hasPermission("hglobby.queue")) {
+                HungerGamesLobby.queueManager.registerIntoQueue(((Player) sender));
+            }
+            else {
+                sender.sendMessage(ChatColor.RED + "You don't have permission to queue.");
+            }
         }
         else {
             sender.sendMessage("Could not register you into queue because you are not a player.");
