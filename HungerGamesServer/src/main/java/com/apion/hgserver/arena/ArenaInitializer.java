@@ -39,6 +39,9 @@ public class ArenaInitializer {
         String templatePrefix = HungerGamesServer.getInstance().getConfig().getString("arena.templatePrefix");
         List<Game> arenas = hgPlugin.getGames();
         List<Game> templateArenas = arenas.stream().filter(g -> g.getGameArenaData().getName().startsWith(templatePrefix)).toList();
+        if (templateArenas.size() == 0) {
+            logger.severe("No arenas found that begins with " + templatePrefix);
+        }
         String templateArenaName = templateArenas.get(random.nextInt(templateArenas.size())).getGameArenaData().getName();
         logger.info("Creating arena based on" + templateArenaName);
         Game arenaTemplate = arenas.stream().filter((game -> game.getGameArenaData().getName().equals(templateArenaName)))
@@ -78,6 +81,7 @@ public class ArenaInitializer {
                 });
         if (!playersWaitingToBeMoved.containsKey(playerUuid)) {
             player.sendMessage("You are not currently supposed to be in a game!");
+            return;
         }
 
         String arenaName = playersWaitingToBeMoved.get(playerUuid);
