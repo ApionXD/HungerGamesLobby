@@ -38,9 +38,10 @@ public class ArenaTimerRunnable extends BukkitRunnable {
      * This class will periodically update the bossbar for the players in the playerList.
      * Upon first creation, it will also initialize a task to create the arena on the server
      * named destination that those players will be moved into when currentTimer = 0.
-     * @param players Players to update with the bossbar
-     * @param delay How long it will take to move players into their game
-     * @param maxPlayers Max amount of players in the queue
+     *
+     * @param players     Players to update with the bossbar
+     * @param delay       How long it will take to move players into their game
+     * @param maxPlayers  Max amount of players in the queue
      * @param destination Destination server to both create the arena and move the players into.
      */
     public ArenaTimerRunnable(final Queue<UUID> players, final int delay, final int maxPlayers, final String destination) {
@@ -60,6 +61,7 @@ public class ArenaTimerRunnable extends BukkitRunnable {
         // Update bossbar and cancel after delay, update every second
         countOffTask = new BukkitRunnable() {
             int runs = 0;
+
             @Override
             public void run() {
                 currentTimerCountingDown -= 20;
@@ -110,16 +112,26 @@ public class ArenaTimerRunnable extends BukkitRunnable {
         return players.contains(playerUuid);
     }
 
-    public void removePlayerFromQueueIfPresent(final UUID player) {
-        players.remove(player);
+    public void removePlayerFromQueueIfPresent(final UUID playerUuid) {
+        players.remove(playerUuid);
+        final BossBar bossBar = Bukkit.getBossBar(bossBarKey);
+
+        if (bossBar == null) {
+            return;
+        }
+
+        final Player player = Bukkit.getPlayer(playerUuid);
+        if (player == null) {
+            return;
+        }
+
+        bossBar.removePlayer(player);
     }
 
     /**
      * Finds the existing boss bar and adds the player to it.
      *
      * @param player Player to add
-     * TODO: This doesn't work for old clients, need to check for old protocol version and
-     * send them a chat message or something.
      */
     private void showArenaBossBarToPlayer(final Player player) {
         String bossBarTitle = String.format(BOSS_BAR_TITLE, players.size(), maxPlayers, currentTimerCountingDown / 20);

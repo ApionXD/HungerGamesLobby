@@ -13,9 +13,7 @@ public class HungerGamesLobby extends JavaPlugin {
     private static HungerGamesLobby instance;
     public static QueueManager queueManager;
     public static BungeeMessageListener bungeeMessageListener;
-
-    @Getter
-    private static HungeeServerExecutor hungeeServerExecutor;
+    public static HungeeServerExecutor hungeeServerExecutor;
 
     @Override
     public void onEnable() {

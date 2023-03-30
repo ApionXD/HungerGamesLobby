@@ -1,7 +1,6 @@
 package com.apion.hglobby.runnables;
 
 import com.apion.hglobby.HungerGamesLobby;
-import server.HungeeServerExecutor;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -25,7 +24,7 @@ public class CreateArenaRunnable extends BukkitRunnable {
     @Override
     public void run() {
         logger.info("Sending arena initialization message to server: " + serverToCreateArena);
-        HungeeServerExecutor serverMessage = HungerGamesLobby.getHungeeServerExecutor();
-        serverMessage.sendInitArenaMessage(serverToCreateArena, arenaName, HungerGamesLobby.getInstance());
+        HungerGamesLobby.hungeeServerExecutor
+                .sendInitArenaMessage(serverToCreateArena, arenaName, HungerGamesLobby.getInstance());
     }
 }

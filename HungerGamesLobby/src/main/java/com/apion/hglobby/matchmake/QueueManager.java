@@ -72,6 +72,9 @@ public class QueueManager {
                 }
             });
         }
+        else {
+            queueBossBar.removePlayer(Bukkit.getPlayer(playerUuid));
+        }
     }
 
     public void registerIntoQueue(final Player player) {

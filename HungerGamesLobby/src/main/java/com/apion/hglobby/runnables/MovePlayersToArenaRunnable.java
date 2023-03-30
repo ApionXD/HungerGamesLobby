@@ -36,7 +36,7 @@ public class MovePlayersToArenaRunnable extends BukkitRunnable {
             Bukkit.removeBossBar(bossBarKey);
         }
         logger.info(MessageFormat.format("Moving {0} players into {1}", players.size(), serverName));
-        HungerGamesLobby.getHungeeServerExecutor().sendArenaMoveMessage(
+        HungerGamesLobby.hungeeServerExecutor.sendArenaMoveMessage(
                 serverName,
                 arenaName,
                 players,
@@ -50,7 +50,7 @@ public class MovePlayersToArenaRunnable extends BukkitRunnable {
                     });
 
             logger.info(MessageFormat.format("Moving {0} to server {1}", player.getName(), serverName));
-            HungerGamesLobby.getHungeeServerExecutor()
+            HungerGamesLobby.hungeeServerExecutor
                     .sendMovePlayerMessage(
                             serverName,
                             player,
