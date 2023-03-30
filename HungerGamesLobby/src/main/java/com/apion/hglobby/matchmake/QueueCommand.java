@@ -15,7 +15,7 @@ public class QueueCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (sender instanceof Player) {
-            if (sender.hasPermission("hglobby.queue")) {
+            if (sender.hasPermission("hungeeLobby.queue")) {
                 final Player player = ((Player) sender).getPlayer();
                 if (player == null) {
                     return false;

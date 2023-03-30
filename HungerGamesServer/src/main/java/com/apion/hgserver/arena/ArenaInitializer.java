@@ -83,10 +83,9 @@ public class ArenaInitializer {
                     return new IllegalStateException("Couldn't place player in arena because they don't exist");
                 });
         if (!playersWaitingToBeMoved.containsKey(playerUuid)) {
-            player.sendMessage("You are not currently supposed to be in a game!");
-            User user = Optional.ofNullable(LuckPermsProvider.get().getUserManager().getUser(playerUuid)).orElseThrow();
-            String group = user.getPrimaryGroup();
-            if (!group.equals(HungerGamesServer.getInstance().getConfig().getString("luckperms.adminRole"))) {
+            final boolean dontKickPlayer = player.hasPermission("hungeeServer.dontKickOnJoin");
+            player.sendMessage("You are not currently supposed to be in a game! If this is unexpected, tell an admin!");
+            if (!dontKickPlayer) {
                 player.sendMessage("Sending you back to lobby...");
                 new MovePlayersToMainServerRunnable(Collections.singletonList(playerUuid)).runTaskLater(HungerGamesServer.getInstance(), 40);
             }
@@ -94,15 +93,20 @@ public class ArenaInitializer {
         }
 
         String arenaName = playersWaitingToBeMoved.get(playerUuid);
-        Game arena = hgPlugin.getGames()
+        hgPlugin.getGames()
                 .stream()
                 .filter(game -> game.getGameArenaData().getName().equals(arenaName))
                 .findAny()
-                .orElseThrow(
-                        () -> new IllegalStateException("Couldn't find arena " + arenaName + " to place player in.")
-                );
-        arena.getGamePlayerData().join(player);
-        playersWaitingToBeMoved.remove(playerUuid);
+                .ifPresentOrElse((game) -> {
+                    game.getGamePlayerData().join(player);
+                    playersWaitingToBeMoved.remove(playerUuid);
+                }, () -> {
+                    if (playersWaitingToBeMoved.containsKey(playerUuid)) {
+                        playersWaitingToBeMoved.remove(playerUuid);
+                        throw new IllegalStateException("Couldn't find arena " + arenaName + " to place player in.");
+                    }
+                });
+
     }
     public void addPlayerToMap(UUID player, String arena) {
         playersWaitingToBeMoved.put(player, arena);
