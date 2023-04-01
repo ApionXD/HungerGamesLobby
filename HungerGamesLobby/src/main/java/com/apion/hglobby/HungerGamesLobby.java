@@ -3,7 +3,6 @@ package com.apion.hglobby;
 import com.apion.hglobby.bungee.BungeeMessageListener;
 import com.apion.hglobby.command.QueueAll;
 import com.apion.hglobby.command.QueueOther;
-import com.apion.hglobby.listeners.PlayerLeaveListener;
 import com.apion.hglobby.command.Queue;
 import com.apion.hglobby.matchmake.QueueManager;
 import org.bukkit.Bukkit;
@@ -27,7 +26,6 @@ public class HungerGamesLobby extends JavaPlugin {
         hungeeServerExecutor = new HungeeServerExecutor();
         bungeeMessageListener.init();
 
-        Bukkit.getPluginManager().registerEvents(new PlayerLeaveListener(), this);
         //noinspection DataFlowIssue
         this.getCommand("queue").setExecutor(new Queue());
         this.getCommand("queueother").setExecutor(new QueueOther());
