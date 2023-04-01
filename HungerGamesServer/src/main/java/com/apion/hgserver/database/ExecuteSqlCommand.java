@@ -77,6 +77,7 @@ public class ExecuteSqlCommand {
             statement.setString(1, playerUuid);
             statement.setString(2, arenaName);
             statement.setString(3, primaryGroup);
+            statement.execute();
             return true;
         } catch (SQLException e) {
             logger.severe("Could not insert player kill: ");

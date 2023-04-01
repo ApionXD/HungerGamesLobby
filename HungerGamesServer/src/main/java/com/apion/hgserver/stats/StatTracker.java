@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
+import tk.shanebee.hg.events.FreeRoamEvent;
 import tk.shanebee.hg.events.GameStartEvent;
 import tk.shanebee.hg.events.PlayerDeathGameEvent;
 import tk.shanebee.hg.game.Game;
@@ -66,7 +67,7 @@ public class StatTracker implements Listener {
         );
     }
     @EventHandler
-    public void onGameStart(GameStartEvent event) {
+    public void onGameStart(FreeRoamEvent event) {
         List<UUID> players = event.getGame().getGamePlayerData().getPlayers();
         String arenaName = event.getGame().getGameArenaData().getName();
 
