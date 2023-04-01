@@ -9,6 +9,7 @@ import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class Futures {
     private final Logger logger = Bukkit.getLogger();
@@ -31,8 +32,7 @@ public class Futures {
                     final CompletableFuture<Object>[] playerCountRequests = new CompletableFuture[serverList.size()];
                     for (int i = 0; i < serverList.size(); i++) {
                         CompletableFuture<Object> playerCountRequest = BungeeMessageExecutor.getPlayerCountForServer(serverList.get(i));
-                        playerCountRequests[i] = playerCountRequest;
-                        playerCountRequest.whenComplete(
+                        playerCountRequests[i] = playerCountRequest.whenComplete(
                                 (count, throwable1) -> {
                                     final Pair<String, Integer> serverNameCountPair = (Pair<String, Integer>) count;
                                     logger.info(MessageFormat.format("Got player count for server {0}: {1}", serverNameCountPair.getLeft(), serverNameCountPair.getRight()));
@@ -44,26 +44,24 @@ public class Futures {
                     final CompletableFuture<Void> playerCountDone = CompletableFuture.allOf(playerCountRequests);
                     playerCountDone.whenComplete(
                             (f, e) -> {
-                                final boolean playerCountIsTheSame = playerCountMap.values().stream()
-                                        .distinct()
-                                        .count() <= 1;
-                                if (playerCountIsTheSame) {
-                                    final Random random = new Random();
-                                    String[] serverArray = playerCountMap.keySet().toArray(new String[0]);
-                                    String randomServer = serverArray[random.nextInt(serverArray.length)];
-                                    future.complete(randomServer);
-                                    return;
-                                }
+                                final int minPlayerCount = playerCountMap.entrySet()
+                                        .stream()
+                                        .min(Map.Entry.comparingByValue())
+                                        .orElseThrow(() -> {
+                                            logger.severe("There were no servers to get the min players?");
+                                            return new IllegalStateException();
+                                        }).getValue();
 
-                                future.complete(
-                                        playerCountMap.entrySet()
-                                                .stream()
-                                                .min(Map.Entry.comparingByValue())
-                                                .orElseThrow(() -> {
-                                                    logger.severe("There were no servers to get the min players?");
-                                                    return new IllegalStateException();
-                                                }).getKey()
-                                );
+                                List<String> serversWithMinCount = playerCountMap
+                                        .entrySet()
+                                        .stream()
+                                        .filter(entry -> entry.getValue() == minPlayerCount)
+                                        .map(Map.Entry::getKey)
+                                        .toList();
+                                Random random = new Random();
+                                String server = serversWithMinCount.get(random.nextInt(serversWithMinCount.size()));
+
+                                future.complete(server);
                             }
                     );
                 }
