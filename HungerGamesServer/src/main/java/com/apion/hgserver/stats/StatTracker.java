@@ -52,5 +52,14 @@ public class StatTracker implements Listener {
                 arenaName,
                 primaryGroup
         );
+        ExecuteSqlCommand.insertPlayerPlacement(
+                killed.getUniqueId(),
+                server,
+                arenaName,
+                event.getGame().getGamePlayerData().getPlayers().size(),
+                event.getGame().getGamePlayerData().getAllPlayers().size(),
+                primaryGroup
+        );
     }
+
 }
