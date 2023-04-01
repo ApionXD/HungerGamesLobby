@@ -6,3 +6,5 @@ commands:
     description: Enters you into a new hunger games lobby queue
   queueother:
     description: Enters someone else into a new hunger games lobby queue
+  queueall:
+    description: Enters all players in the current server into a queue

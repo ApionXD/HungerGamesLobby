@@ -93,6 +93,8 @@ public class ArenaInitializer {
         }
 
         String arenaName = playersWaitingToBeMoved.get(playerUuid);
+        World w = Bukkit.getWorld(arenaName);
+        player.teleport(w.getSpawnLocation());
         hgPlugin.getGames()
                 .stream()
                 .filter(game -> game.getGameArenaData().getName().equals(arenaName))

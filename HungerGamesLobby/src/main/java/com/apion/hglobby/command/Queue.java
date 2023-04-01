@@ -1,4 +1,4 @@
-package com.apion.hglobby.matchmake;
+package com.apion.hglobby.command;
 
 import com.apion.hglobby.HungerGamesLobby;
 import org.bukkit.ChatColor;
@@ -8,9 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Optional;
-
-public class QueueCommand implements CommandExecutor {
+public class Queue implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {

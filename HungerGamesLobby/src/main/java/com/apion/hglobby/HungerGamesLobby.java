@@ -1,10 +1,11 @@
 package com.apion.hglobby;
 
 import com.apion.hglobby.bungee.BungeeMessageListener;
+import com.apion.hglobby.command.QueueAll;
+import com.apion.hglobby.command.QueueOther;
 import com.apion.hglobby.listeners.PlayerLeaveListener;
-import com.apion.hglobby.matchmake.QueueCommand;
+import com.apion.hglobby.command.Queue;
 import com.apion.hglobby.matchmake.QueueManager;
-import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -33,15 +34,10 @@ public class HungerGamesLobby extends JavaPlugin {
 
         Bukkit.getPluginManager().registerEvents(new PlayerLeaveListener(), this);
         //noinspection DataFlowIssue
-        this.getCommand("queue").setExecutor(new QueueCommand());
-        this.getCommand("queueother").setExecutor(new CommandExecutor() {
-            @Override
-            public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-                Player p = Bukkit.getPlayer(args[0]);
-                Bukkit.dispatchCommand(p, "queue");
-                return true;
-            }
-        });
+        this.getCommand("queue").setExecutor(new Queue());
+        this.getCommand("queueother").setExecutor(new QueueOther());
+        //This is bugged rn
+        this.getCommand("queueall").setExecutor(new QueueAll());
     }
 
     @Override
