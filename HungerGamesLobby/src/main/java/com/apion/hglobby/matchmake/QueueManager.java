@@ -94,6 +94,7 @@ public class QueueManager {
     public void registerIntoQueue(final Player player) {
         boolean addedPlayerToExistingQueue = false;
 
+        logger.info("registering player " + player.getUniqueId());
         synchronized (queuesInProgress) {
             //Removes all finished queues
             queuesInProgress.values().stream()
@@ -113,6 +114,7 @@ public class QueueManager {
                         .orElse(null);
 
                 if (queue != null) {
+                    logger.info("registering player " + player.getUniqueId() + " into queue in progress " + queue.getQueueUuid());
                     addedPlayerToExistingQueue = queue.addPlayerToQueueAboutToStartIfPossible(playerUUID);
                     if (!addedPlayerToExistingQueue) {
                         logger.severe(MessageFormat.format("Couldn't add {0} to queue {1}", playerUUID, queuesInProgress.get(queue)));
@@ -132,6 +134,7 @@ public class QueueManager {
                                     (creatingOnServer, throwable) -> {
                                         queueBossBar.removeAll();
                                         final UUID subQueueId = UUID.randomUUID();
+                                        logger.info("registering player " + player.getUniqueId() + " into new queue" + subQueueId);
                                         final ArenaTimerRunnable runnable = new ArenaTimerRunnable(
                                                 new LinkedList<>(playerList),
                                                 HungerGamesLobby.getInstance().getIntFromConfirm("queue.delayToRunArena"),

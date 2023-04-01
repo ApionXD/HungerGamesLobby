@@ -112,7 +112,7 @@ public class ArenaTimerRunnable extends BukkitRunnable {
 
     @Override
     public synchronized boolean isCancelled() throws IllegalStateException {
-        if (countOffTask.isCancelled()) {
+        if (countOffTask.isCancelled() || taskKilled) {
             this.cancel();
             return true;
         }
@@ -149,7 +149,7 @@ public class ArenaTimerRunnable extends BukkitRunnable {
                 final boolean canMerge = HungerGamesLobby.queueManager.canMergeQueues(copyOfPlayers);
 
                 if (!canMerge) {
-                    players.forEach(playerUuid -> {
+                    copyOfPlayers.forEach(playerUuid -> {
                         final Player player = Bukkit.getPlayer(playerUuid);
                         if (player != null) {
                             player.sendMessage("Someone left your queue and it wasn't possible to merge with the existing queue. Please queue again!");
@@ -160,16 +160,16 @@ public class ArenaTimerRunnable extends BukkitRunnable {
                     return;
                 }
 
-                players.forEach( playerUuid -> {
+                players.clear();
+                this.cancel();
+                this.taskKilled = true;
+                copyOfPlayers.forEach( playerUuid -> {
                     final Player player = Bukkit.getPlayer(playerUuid);
                     if (player != null) {
                         player.sendMessage("Someone left your queue in progress, sending you back to the main queue.");
+                        HungerGamesLobby.queueManager.registerIntoQueue(player);
                     }
                 });
-                players.clear();
-                HungerGamesLobby.queueManager.mergeQueueIntoCurrentQueue(copyOfPlayers);
-                this.cancel();
-                this.taskKilled = true;
             }
 
             final BossBar bossBar = Bukkit.getBossBar(bossBarKey);
