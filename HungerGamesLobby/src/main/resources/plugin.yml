@@ -4,3 +4,5 @@ version: 1.0.0
 commands:
   queue:
     description: Enters you into a new hunger games lobby queue
+  queueother:
+    description: Enters someone else into a new hunger games lobby queue

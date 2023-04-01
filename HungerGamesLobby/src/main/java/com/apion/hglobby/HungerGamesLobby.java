@@ -6,6 +6,11 @@ import com.apion.hglobby.matchmake.QueueCommand;
 import com.apion.hglobby.matchmake.QueueManager;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import server.HungeeServerExecutor;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -29,6 +34,14 @@ public class HungerGamesLobby extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new PlayerLeaveListener(), this);
         //noinspection DataFlowIssue
         this.getCommand("queue").setExecutor(new QueueCommand());
+        this.getCommand("queueother").setExecutor(new CommandExecutor() {
+            @Override
+            public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+                Player p = Bukkit.getPlayer(args[0]);
+                Bukkit.dispatchCommand(p, "queue");
+                return true;
+            }
+        });
     }
 
     @Override
