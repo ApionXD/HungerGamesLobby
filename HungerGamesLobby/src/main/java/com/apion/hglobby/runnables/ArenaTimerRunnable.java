@@ -1,6 +1,7 @@
 package com.apion.hglobby.runnables;
 
 import com.apion.hglobby.HungerGamesLobby;
+import lombok.Getter;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
@@ -22,17 +23,17 @@ public class ArenaTimerRunnable extends BukkitRunnable {
     private final String BOSS_BAR_TITLE =
             ChatColor.BLUE + ChatColor.BOLD.toString() + "%s / %s possible players" +
                     ChatColor.RESET + ChatColor.LIGHT_PURPLE + " %ss left until start!";
-    private final UUID queueUuid = UUID.randomUUID();
-    private final NamespacedKey bossBarKey = new NamespacedKey(
-            HungerGamesLobby.getInstance(),
-            queueUuid.toString()
-    );
+    @Getter
+    private final UUID queueUuid;
+    private final NamespacedKey bossBarKey;
     int delay;
     int currentTimerCountingDown;
     int maxPlayers;
     private BukkitTask countOffTask;
     String destination;
     String arenaName;
+    int playersNeededToStartArena;
+    boolean taskKilled;
 
     /**
      * This class will periodically update the bossbar for the players in the playerList.
@@ -44,13 +45,26 @@ public class ArenaTimerRunnable extends BukkitRunnable {
      * @param maxPlayers  Max amount of players in the queue
      * @param destination Destination server to both create the arena and move the players into.
      */
-    public ArenaTimerRunnable(final Queue<UUID> players, final int delay, final int maxPlayers, final String destination) {
+    public ArenaTimerRunnable(
+            final Queue<UUID> players,
+            final int delay,
+            final int requiredPlayers,
+            final int maxPlayers,
+            final String destination,
+            final UUID queueUuid
+    ) {
         this.players = players;
         this.delay = delay;
         this.currentTimerCountingDown = delay;
+        this.playersNeededToStartArena = requiredPlayers;
         this.maxPlayers = maxPlayers;
         this.destination = destination;
         this.arenaName = UUID.randomUUID().toString().substring(0, 8);
+        this.queueUuid = queueUuid;
+        bossBarKey = new NamespacedKey(
+                HungerGamesLobby.getInstance(),
+                queueUuid.toString()
+        );
     }
 
     @Override
@@ -60,16 +74,23 @@ public class ArenaTimerRunnable extends BukkitRunnable {
         new CreateArenaRunnable(destination, arenaName).runTask(HungerGamesLobby.getInstance());
         // Update bossbar and cancel after delay, update every second
         countOffTask = new BukkitRunnable() {
+            final UUID parentQueueUuid = queueUuid;
             int runs = 0;
 
             @Override
             public void run() {
+                final Optional<ArenaTimerRunnable> parent = HungerGamesLobby.queueManager.getQueueInProgress(parentQueueUuid);
+                final boolean parentIsCancelled = parent.isEmpty() || parent.get().taskKilled;
+                logger.info("parent uuid: " + parentQueueUuid);
+                logger.info("parent: " + parent.isEmpty());
+                logger.info("parent cancelled: " + parentIsCancelled);
+
                 currentTimerCountingDown -= 20;
                 for (final UUID player : players) {
                     showArenaBossBarToPlayer(Bukkit.getPlayer(player));
                 }
                 runs++;
-                if (runs >= delay / 20) {
+                if (runs >= delay / 20 || parentIsCancelled) {
                     final BossBar queueBossBar = Bukkit.getBossBar(bossBarKey);
                     Bukkit.getServer().removeBossBar(bossBarKey);
 
@@ -78,9 +99,11 @@ public class ArenaTimerRunnable extends BukkitRunnable {
                         Bukkit.removeBossBar(bossBarKey);
                     }
 
-                    new MovePlayersToArenaRunnable(players, bossBarKey, destination, arenaName).runTask(
-                            HungerGamesLobby.getInstance()
-                    );
+                    if (!parentIsCancelled) {
+                        new MovePlayersToArenaRunnable(players, bossBarKey, destination, arenaName).runTask(
+                                HungerGamesLobby.getInstance()
+                        );
+                    }
                     this.cancel();
                 }
             }
@@ -96,36 +119,72 @@ public class ArenaTimerRunnable extends BukkitRunnable {
         return super.isCancelled();
     }
 
-    public void forceAddPlayerToQueue(final UUID player) {
+    public void forceAddPlayerToQueueAboutToStart(final UUID player) {
         players.add(player);
     }
 
-    public boolean addPlayerToQueueIfPossible(final UUID player) {
-        return notAtPlayerCap() && players.add(player);
+    public boolean addPlayerToQueueAboutToStartIfPossible(final UUID player) {
+        synchronized (players) {
+            final int TWO_SECONDS_IN_TICKS = 40;
+            return notAtPlayerCap() &&
+                    currentTimerCountingDown >= TWO_SECONDS_IN_TICKS &&
+                    players.add(player);
+        }
     }
 
     public boolean notAtPlayerCap() {
         return players.size() <= HungerGamesLobby.getInstance().getIntFromConfirm("queue.maxPlayers");
     }
 
-    public boolean isPlayerInQueue(final UUID playerUuid) {
+    public boolean isPlayerInQueueAboutToStart(final UUID playerUuid) {
         return players.contains(playerUuid);
     }
 
-    public void removePlayerFromQueueIfPresent(final UUID playerUuid) {
-        players.remove(playerUuid);
-        final BossBar bossBar = Bukkit.getBossBar(bossBarKey);
+    public void removePlayerFromQueueAboutToStartIfPresent(final UUID removedPlayerUuid) {
+        synchronized (players) {
+            players.remove(removedPlayerUuid);
 
-        if (bossBar == null) {
-            return;
+            if (players.size() <= playersNeededToStartArena) {
+                final List<UUID> copyOfPlayers = new ArrayList<>(players);
+                final boolean canMerge = HungerGamesLobby.queueManager.canMergeQueues(copyOfPlayers);
+
+                if (!canMerge) {
+                    players.forEach(playerUuid -> {
+                        final Player player = Bukkit.getPlayer(playerUuid);
+                        if (player != null) {
+                            player.sendMessage("Someone left your queue and it wasn't possible to merge with the existing queue. Please queue again!");
+                        }
+                    });
+                    this.cancel();
+                    this.taskKilled = true;
+                    return;
+                }
+
+                players.forEach( playerUuid -> {
+                    final Player player = Bukkit.getPlayer(playerUuid);
+                    if (player != null) {
+                        player.sendMessage("Someone left your queue in progress, sending you back to the main queue.");
+                    }
+                });
+                players.clear();
+                HungerGamesLobby.queueManager.mergeQueueIntoCurrentQueue(copyOfPlayers);
+                this.cancel();
+                this.taskKilled = true;
+            }
+
+            final BossBar bossBar = Bukkit.getBossBar(bossBarKey);
+
+            if (bossBar == null) {
+                return;
+            }
+
+            final Player player = Bukkit.getPlayer(removedPlayerUuid);
+            if (player == null) {
+                return;
+            }
+
+            bossBar.removePlayer(player);
         }
-
-        final Player player = Bukkit.getPlayer(playerUuid);
-        if (player == null) {
-            return;
-        }
-
-        bossBar.removePlayer(player);
     }
 
     /**

@@ -3,8 +3,6 @@ package com.apion.hgserver.arena;
 import com.apion.hgserver.HungerGamesServer;
 import com.apion.hgserver.runnables.MovePlayersToMainServerRunnable;
 import com.onarandombox.MultiverseCore.MultiverseCore;
-import net.luckperms.api.LuckPermsProvider;
-import net.luckperms.api.model.user.User;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;

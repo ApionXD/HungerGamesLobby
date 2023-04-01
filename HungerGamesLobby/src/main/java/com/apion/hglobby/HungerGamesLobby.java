@@ -7,11 +7,6 @@ import com.apion.hglobby.listeners.PlayerLeaveListener;
 import com.apion.hglobby.command.Queue;
 import com.apion.hglobby.matchmake.QueueManager;
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 import server.HungeeServerExecutor;
 import org.bukkit.plugin.java.JavaPlugin;
 
