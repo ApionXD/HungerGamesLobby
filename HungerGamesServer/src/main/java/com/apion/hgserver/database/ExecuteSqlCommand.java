@@ -15,6 +15,7 @@ public class ExecuteSqlCommand {
     private final static String insertPlayerPlacement =
             "Insert into player_placements(time,           player_uuid, server, arena_id, place, game_start_players, primary_group)" +
             "                 Values (current_timestamp(), ?          , ?     , ?       , ?    , ?                  ,?)           ";
+    private final static String insertPlayer = "Insert into arena_players(player_uuid, arena_id, primary_group) Values (?, ?, ?)";
 
     public static boolean insertPlayerKill(
             final UUID playerKillerUuid,
@@ -57,6 +58,25 @@ public class ExecuteSqlCommand {
             statement.setInt(5, numPlayers);
             statement.setString(6, group);
             statement.execute();
+            return true;
+        } catch (SQLException e) {
+            logger.severe("Could not insert player kill: ");
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static boolean insertArenaPlayer(
+            final String arenaName,
+            final String playerUuid,
+            final String primaryGroup
+    ) {
+        final Connection con = Database.getConnection();
+        try {
+            final PreparedStatement statement = con.prepareStatement(insertPlayer);
+            statement.setString(1, playerUuid);
+            statement.setString(2, arenaName);
+            statement.setString(3, primaryGroup);
             return true;
         } catch (SQLException e) {
             logger.severe("Could not insert player kill: ");

@@ -9,8 +9,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
+import tk.shanebee.hg.events.GameStartEvent;
 import tk.shanebee.hg.events.PlayerDeathGameEvent;
 import tk.shanebee.hg.game.Game;
+
+import java.util.List;
+import java.util.UUID;
 
 public class StatTracker implements Listener {
 
@@ -60,6 +64,21 @@ public class StatTracker implements Listener {
                 event.getGame().getGamePlayerData().getAllPlayers().size(),
                 primaryGroup
         );
+    }
+    @EventHandler
+    public void onGameStart(GameStartEvent event) {
+        List<UUID> players = event.getGame().getGamePlayerData().getPlayers();
+        String arenaName = event.getGame().getGameArenaData().getName();
+
+
+        players.forEach(player -> {
+            final User luckPermsUser = LuckPermsProvider.get().getUserManager().getUser(player);
+            String primaryGroup = null;
+            if (luckPermsUser != null) {
+                primaryGroup = luckPermsUser.getPrimaryGroup();
+            }
+            ExecuteSqlCommand.insertArenaPlayer(arenaName, String.valueOf(player), primaryGroup);
+        });
     }
 
 }
