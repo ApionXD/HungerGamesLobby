@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import tk.shanebee.hg.HG;
 import tk.shanebee.hg.Status;
 import tk.shanebee.hg.game.Bound;
@@ -91,22 +92,42 @@ public class ArenaInitializer {
         }
 
         String arenaName = playersWaitingToBeMoved.get(playerUuid);
-        World w = Bukkit.getWorld(arenaName);
-        player.teleport(w.getSpawnLocation());
-        hgPlugin.getGames()
-                .stream()
-                .filter(game -> game.getGameArenaData().getName().equals(arenaName))
-                .findAny()
-                .ifPresentOrElse((game) -> {
-                    game.getGamePlayerData().join(player);
-                    playersWaitingToBeMoved.remove(playerUuid);
-                }, () -> {
-                    if (playersWaitingToBeMoved.containsKey(playerUuid)) {
-                        playersWaitingToBeMoved.remove(playerUuid);
-                        throw new IllegalStateException("Couldn't find arena " + arenaName + " to place player in.");
-                    }
-                });
+        new BukkitRunnable() {
+            final int MAX_ATTEMPTS = 10;
+            int attempts = 0;
+            @Override
+            public void run() {
+                if (MAX_ATTEMPTS == attempts) {
+                    logger.severe("Couldn't move " + playerUuid + " into arena after 10 tries.");
+                    this.cancel();
+                }
+                World w = Bukkit.getWorld(arenaName);
+                if (w == null) {
+                    return;
+                }
 
+                final boolean success = player.teleport(w.getSpawnLocation());
+                if (success) {
+                    hgPlugin.getGames()
+                            .stream()
+                            .filter(game -> game.getGameArenaData().getName().equals(arenaName))
+                            .findAny()
+                            .ifPresentOrElse((game) -> {
+                                game.getGamePlayerData().join(player);
+                                playersWaitingToBeMoved.remove(playerUuid);
+                            }, () -> {
+                                if (playersWaitingToBeMoved.containsKey(playerUuid)) {
+                                    playersWaitingToBeMoved.remove(playerUuid);
+                                    throw new IllegalStateException("Couldn't find arena " + arenaName + " to place player in.");
+                                }
+                            });
+                    this.cancel();
+                    return;
+                }
+
+                attempts++;
+            }
+        }.runTaskTimerAsynchronously(HungerGamesServer.getInstance(), 0, 40);
     }
     public void addPlayerToMap(UUID player, String arena) {
         playersWaitingToBeMoved.put(player, arena);

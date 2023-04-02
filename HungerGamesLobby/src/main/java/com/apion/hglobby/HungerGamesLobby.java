@@ -1,11 +1,9 @@
 package com.apion.hglobby;
 
 import com.apion.hglobby.bungee.BungeeMessageListener;
-import com.apion.hglobby.command.QueueAll;
 import com.apion.hglobby.command.QueueOther;
 import com.apion.hglobby.command.Queue;
 import com.apion.hglobby.matchmake.QueueManager;
-import org.bukkit.Bukkit;
 import server.HungeeServerExecutor;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -29,8 +27,6 @@ public class HungerGamesLobby extends JavaPlugin {
         //noinspection DataFlowIssue
         this.getCommand("queue").setExecutor(new Queue());
         this.getCommand("queueother").setExecutor(new QueueOther());
-        //This is bugged rn
-        this.getCommand("queueall").setExecutor(new QueueAll());
     }
 
     @Override

@@ -12,13 +12,13 @@ import java.util.Optional;
 public class QueueOther implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (args.length > 0){
-            Optional.ofNullable(Bukkit.getPlayer(args[0])).ifPresentOrElse(p -> {
-                Bukkit.dispatchCommand(p, "queue");
-            },
-            () -> {
-                sender.sendMessage("&cPlayer not found");
-            });
+        if (sender.hasPermission("hungeeLobby.queueOther")) {
+            if (args.length > 0){
+                Optional.ofNullable(Bukkit.getPlayer(args[0])).ifPresentOrElse(p -> {
+                            Bukkit.dispatchCommand(p, "queue");
+                        },
+                        () -> sender.sendMessage("&cPlayer not found"));
+            }
         }
         return true;
     }

@@ -33,12 +33,15 @@ public class GoToLobbyCommand implements CommandExecutor {
                     return true;
                 }
             }
-            if (player == null || playerData == null) {
-                logger.severe("Player or PlayerData was null when they were attempting to leave an arena");
+            if (player == null) {
+                logger.severe("Player was null when they were attempting to leave an arena");
                 return false;
             }
 
-            playerData.getGame().getGamePlayerData().leave(player, false);
+            if (playerData != null) {
+                playerData.getGame().getGamePlayerData().leave(player, false);
+            }
+
             new MovePlayersToMainServerRunnable(Collections.singletonList(player.getUniqueId())).runTask(HungerGamesServer.getInstance());
         }
 
