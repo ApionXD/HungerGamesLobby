@@ -127,7 +127,7 @@ public class ArenaInitializer {
 
                 attempts++;
             }
-        }.runTaskTimerAsynchronously(HungerGamesServer.getInstance(), 0, 40);
+        }.runTaskTimer(HungerGamesServer.getInstance(), 0, 40);
     }
     public void addPlayerToMap(UUID player, String arena) {
         playersWaitingToBeMoved.put(player, arena);
